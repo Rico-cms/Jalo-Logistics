@@ -277,27 +277,39 @@
         /* Loader styles */
         #site-loader { transition: opacity 420ms ease, visibility 420ms; }
         #site-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .loader-logo-wrapper { display: inline-block; }
+        .loader-logo-wrapper { display: inline-block; position: relative; width: 7rem; height: 7rem; }
 
-        /* Logo animation: rotate + pulse + subtle bounce */
-        @keyframes loader-rotate-scale {
-            0% { transform: rotate(0deg) scale(0.96); }
-            25% { transform: rotate(8deg) scale(1.03); }
-            50% { transform: rotate(0deg) scale(1.08); }
-            75% { transform: rotate(-6deg) scale(1.02); }
-            100% { transform: rotate(0deg) scale(0.98); }
+        /* Logo morphing / crossfade between two images */
+        .logo-morph { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+        .logo-from { z-index: 2; }
+        .logo-to { z-index: 1; opacity: 0; }
+
+        /* Keyframes: from logo -> morph -> to logo; both images use complementary animations */
+        @keyframes logo-from-out {
+            0%   { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); filter: none; }
+            45%  { opacity: 1; transform: translateY(-6px) scale(1.06) rotate(6deg); filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12)); }
+            70%  { opacity: 0.35; transform: translateY(-12px) scale(1.12) rotate(10deg) grayscale(0.2); }
+            100% { opacity: 0; transform: translateY(-18px) scale(1.18) rotate(12deg) grayscale(0.5); }
         }
 
-        @keyframes loader-glow {
-            0% { filter: drop-shadow(0 0 0 rgba(255,210,0,0)); }
-            50% { filter: drop-shadow(0 10px 30px rgba(255,210,0,0.18)); }
-            100% { filter: drop-shadow(0 0 0 rgba(255,210,0,0)); }
+        @keyframes logo-to-in {
+            0%   { opacity: 0; transform: translateY(18px) scale(0.86) rotate(-8deg); filter: blur(1px) grayscale(0.6); }
+            30%  { opacity: 0.2; transform: translateY(10px) scale(0.92) rotate(-4deg); filter: blur(0.6px) grayscale(0.3); }
+            60%  { opacity: 0.8; transform: translateY(2px) scale(1.02) rotate(2deg); filter: none; }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); filter: none; }
         }
 
-        #loader-logo {
-            animation: loader-rotate-scale 2000ms ease-in-out infinite, loader-glow 2200ms ease-in-out infinite;
-            transition: transform 220ms ease;
-        }
+        /* Looping morph: duration short so it feels lively; infinite while loader visible */
+        .morph-playing .logo-from { animation: logo-from-out 2600ms cubic-bezier(.2,.9,.3,1) infinite; }
+        .morph-playing .logo-to   { animation: logo-to-in  2600ms cubic-bezier(.2,.9,.3,1) infinite; }
+
+        /* Slight pulsing glow for to-logo when present */
+        @keyframes logo-glow { 0%{filter: drop-shadow(0 0 0 rgba(255,210,0,0));}50%{filter: drop-shadow(0 12px 28px rgba(255,210,0,0.12));}100%{filter: drop-shadow(0 0 0 rgba(255,210,0,0));} }
+        .morph-playing .logo-to { animation: logo-to-in 2600ms cubic-bezier(.2,.9,.3,1) infinite, logo-glow 2400ms ease-in-out infinite; }
+
+        /* Fallback single logo animation (keeps some motion if only one image present) */
+        @keyframes loader-rotate-scale { 0%{transform:rotate(0deg) scale(0.96);}25%{transform:rotate(8deg) scale(1.03);}50%{transform:rotate(0deg) scale(1.08);}75%{transform:rotate(-6deg) scale(1.02);}100%{transform:rotate(0deg) scale(0.98);} }
+        .single-logo { animation: loader-rotate-scale 2000ms ease-in-out infinite; }
 
         /* Slight pulsing of the container text */
         #site-loader .loader-caption { opacity: 0.95; }
@@ -308,11 +320,14 @@
 </head>
 <body class="flex flex-col min-h-screen overflow-x-hidden antialiased selection:bg-jalo-yellow selection:text-black">
 
-    <!-- START: Fullscreen Loader (20s) -->
-    <div id="site-loader" aria-hidden="false" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-[#050509]">
+    <!-- START: Fullscreen Loader (morphing logos) -->
+    <div id="site-loader" aria-hidden="false" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-[#050509] morph-playing">
         <div class="loader-inner flex flex-col items-center gap-4">
             <div class="loader-logo-wrapper" aria-hidden="true">
-                <img id="loader-logo" src="https://media.licdn.com/dms/image/v2/D4D05AQE0EdrXAzKFlg/videocover-low/B4DZkFKWapG8CE-/0/1756728308165?e=2147483647&v=beta&t=pjSc8lMKkEcZXCXFkHVHcsvcst_lG_fbInreo5Qm2Eo" alt="Jalo Logistics" class="h-28 w-28 sm:h-36 sm:w-36 object-contain"/>
+                <!-- Logo A (from) -->
+                <img id="loader-logo-from" class="logo-morph logo-from" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdLkMtAMndi0a40Y3yCDWrBHduVMJ9PnFlLw&s" alt="Jalo logo initial" />
+                <!-- Logo B (to) -->
+                <img id="loader-logo-to" class="logo-morph logo-to" src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo logo final" />
             </div>
             <div class="w-64 max-w-full">
                 <div class="loader-caption text-sm text-gray-600 dark:text-gray-300 text-center mb-2">Chargement — merci de patienter</div>
@@ -1290,18 +1305,23 @@
     </script>
     <script>
         // Loader: simulated progress bar for 20s, finishes early on window.load, click to skip.
+        // Enhanced: coordinates morphing animation between two logos and stops animations on finish.
         (function () {
             const loader = document.getElementById('site-loader');
             const bar = document.getElementById('loader-bar');
             const percentEl = document.getElementById('loader-percent');
+            const logoFrom = document.getElementById('loader-logo-from');
+            const logoTo = document.getElementById('loader-logo-to');
             if (!loader || !bar || !percentEl) return;
 
             const TOTAL = 20000; // 20s
             const FADE = 420;
-            const step = 100; // ms
             let start = performance.now();
             let rafId = null;
             let finished = false;
+
+            // Ensure morph-playing class is present while loader visible
+            loader.classList.add('morph-playing');
 
             function setProgress(p) {
                 p = Math.max(0, Math.min(100, Math.round(p)));
@@ -1315,7 +1335,6 @@
             function tick(now) {
                 const elapsed = now - start;
                 const raw = Math.min(1, elapsed / TOTAL);
-                // apply easing
                 const eased = ease(raw);
                 setProgress(eased * 100);
                 if (elapsed < TOTAL && !finished) {
@@ -1328,6 +1347,18 @@
             function finishAndHide() {
                 finished = true;
                 setProgress(100);
+
+                // freeze morph: ensure "to" logo is visible and stop CSS infinite animations
+                if (logoFrom) {
+                    try { logoFrom.style.animation = 'none'; } catch (e) {}
+                    logoFrom.style.opacity = '0';
+                }
+                if (logoTo) {
+                    try { logoTo.style.animation = 'none'; } catch (e) {}
+                    logoTo.style.opacity = '1';
+                }
+                loader.classList.remove('morph-playing');
+
                 // small delay so user sees 100%
                 setTimeout(() => {
                     loader.classList.add('hidden');
@@ -1341,8 +1372,8 @@
             // If window load happens, finish early
             window.addEventListener('load', function () {
                 if (!finished) {
-                    // accelerate to 100%
-                    start = performance.now() - TOTAL; // force raw=1 on next tick
+                    // fast-forward to completion on next tick
+                    start = performance.now() - TOTAL;
                 }
             }, { once: true });
 
