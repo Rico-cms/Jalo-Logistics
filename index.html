@@ -107,10 +107,15 @@
                 if (save) saveTheme(pref);
             }
 
+            // Toggle quickly between light and dark for single-click UX.
+            // If the user has chosen 'system', derive the effective theme first.
             function cycleTheme() {
                 const cur = readTheme();
-                const order = ['light', 'dark', 'system'];
-                const next = order[(order.indexOf(cur) + 1) % order.length];
+                let effective = cur;
+                if (cur === 'system') {
+                    effective = (mq && mq.matches) ? 'dark' : 'light';
+                }
+                const next = effective === 'dark' ? 'light' : 'dark';
                 apply(next, true);
             }
 
