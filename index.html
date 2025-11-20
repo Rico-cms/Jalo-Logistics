@@ -149,16 +149,16 @@
                 </nav>
 
                 <!-- Mobile Toggle -->
-                <button class="lg:hidden text-2xl text-black focus:outline-none" onclick="toggleMobileMenu()">
+                <button id="mobile-toggle" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="lg:hidden text-2xl text-black focus:outline-none" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 flex flex-col" role="dialog" aria-modal="true" aria-hidden="true">
+        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 flex flex-col" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
                 <div class="p-6 flex justify-between items-center border-b border-gray-100">
-                <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo" class="h-10 w-auto">
+                <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo logo" class="h-10 w-auto">
                 <button onclick="toggleMobileMenu()" aria-label="Close menu" class="text-2xl text-black"><i class="fas fa-times"></i></button>
             </div>
                 <div class="p-6 overflow-y-auto flex-grow space-y-6">
@@ -294,9 +294,9 @@
         </section>
 
         <!-- 3. ABOUT (Pourquoi Jalo) -->
-        <section id="about" class="py-24 bg-white">
+        <section id="about" class="py-16 sm:py-24 bg-white">
             <div class="container mx-auto px-6 max-w-6xl">
-                <div class="flex flex-col md:flex-row items-center gap-16">
+                <div class="flex flex-col md:flex-row items-center gap-16 px-4 sm:px-6 lg:px-0">
                     <div class="md:w-1/2">
                         <span class="text-jalo-yellow font-bold uppercase tracking-widest text-sm mb-2 block">Notre Genèse</span>
                         <h1 class="text-5xl font-heading leading-tight mb-8">L'INTELLIGENCE LOCALE, <br>INDUSTRIALISÉE.</h1>
@@ -315,7 +315,7 @@
                     </div>
                     <div class="md:w-1/2 relative">
                         <div class="absolute inset-0 bg-jalo-yellow rounded-3xl transform rotate-3"></div>
-                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="relative z-10 rounded-3xl shadow-2xl filter grayscale hover:grayscale-0 transition duration-500 w-full h-auto object-cover">
+                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Équipe JALO en action" class="relative z-10 rounded-3xl shadow-2xl filter grayscale hover:grayscale-0 transition duration-500 w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
@@ -580,7 +580,7 @@
                         </ul>
                     </div>
                     <div class="lg:w-1/2 relative">
-                        <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="rounded-3xl shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Port et conteneurs" class="rounded-3xl shadow-2xl w-full h-auto object-cover">
                         <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg max-w-xs hidden md:block">
                             <h4 class="font-bold text-jalo-yellow">Le saviez-vous ?</h4>
                             <p class="text-sm text-gray-600 mt-1">Nous gérons le pré-acheminement depuis l'usine du fournisseur.</p>
@@ -612,7 +612,7 @@
                         </div>
                     </div>
                     <div class="lg:w-1/2">
-                        <img src="https://images.unsplash.com/photo-1559297434-fae8a1916a79?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="rounded-3xl shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1559297434-fae8a1916a79?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Avion cargo en vol" class="rounded-3xl shadow-2xl w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
@@ -636,7 +636,7 @@
                         </div>
                     </div>
                     <div class="lg:w-1/2">
-                        <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="rounded-3xl shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Flotte de camions de transport" class="rounded-3xl shadow-2xl w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
@@ -765,17 +765,28 @@
         // Mobile Menu Logic
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
+            const toggle = document.getElementById('mobile-toggle');
             const isHidden = menu.classList.contains('translate-x-full');
             if (isHidden) {
                 menu.classList.remove('translate-x-full');
                 menu.classList.add('translate-x-0');
                 menu.setAttribute('aria-hidden', 'false');
+                if (toggle) toggle.setAttribute('aria-expanded', 'true');
+                // lock body scroll
                 document.body.style.overflow = 'hidden';
+                // focus first link in menu
+                setTimeout(() => {
+                    const firstLink = menu.querySelector('a');
+                    if (firstLink) firstLink.focus();
+                }, 150);
             } else {
                 menu.classList.add('translate-x-full');
                 menu.classList.remove('translate-x-0');
                 menu.setAttribute('aria-hidden', 'true');
+                if (toggle) toggle.setAttribute('aria-expanded', 'false');
                 document.body.style.overflow = '';
+                // return focus to toggle button
+                if (toggle) toggle.focus();
             }
         }
 
