@@ -269,9 +269,48 @@
              /* Ajout d'un dégradé subtil pour un look plus premium */
             background: linear-gradient(135deg, #1f1f1f, #000000);
         }
+
+        /* Loader styles */
+        #site-loader { transition: opacity 420ms ease, visibility 420ms; }
+        #site-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-logo-wrapper { display: inline-block; }
+
+        /* Logo animation: rotate + pulse + subtle bounce */
+        @keyframes loader-rotate-scale {
+            0% { transform: rotate(0deg) scale(0.96); }
+            25% { transform: rotate(8deg) scale(1.03); }
+            50% { transform: rotate(0deg) scale(1.08); }
+            75% { transform: rotate(-6deg) scale(1.02); }
+            100% { transform: rotate(0deg) scale(0.98); }
+        }
+
+        @keyframes loader-glow {
+            0% { filter: drop-shadow(0 0 0 rgba(255,210,0,0)); }
+            50% { filter: drop-shadow(0 10px 30px rgba(255,210,0,0.18)); }
+            100% { filter: drop-shadow(0 0 0 rgba(255,210,0,0)); }
+        }
+
+        #loader-logo {
+            animation: loader-rotate-scale 2000ms ease-in-out infinite, loader-glow 2200ms ease-in-out infinite;
+            transition: transform 220ms ease;
+        }
+
+        /* Slight pulsing of the container text */
+        #site-loader .loader-caption { opacity: 0.95; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen overflow-x-hidden antialiased selection:bg-jalo-yellow selection:text-black">
+
+    <!-- START: Fullscreen Loader (20s) -->
+    <div id="site-loader" aria-hidden="false" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-[#050509]">
+        <div class="loader-inner flex flex-col items-center gap-4">
+            <div class="loader-logo-wrapper" aria-hidden="true">
+                <img id="loader-logo" src="https://media.licdn.com/dms/image/v2/D4D05AQE0EdrXAzKFlg/videocover-low/B4DZkFKWapG8CE-/0/1756728308165?e=2147483647&v=beta&t=pjSc8lMKkEcZXCXFkHVHcsvcst_lG_fbInreo5Qm2Eo" alt="Jalo Logistics" class="h-28 w-28 sm:h-36 sm:w-36 object-contain"/>
+            </div>
+            <div class="loader-caption text-sm text-gray-600 dark:text-gray-300">Chargement — merci de patienter</div>
+        </div>
+    </div>
+    <!-- END: Fullscreen Loader -->
 
     <!-- Top Bar -->
     <div class="bg-jalo-black text-white py-2 text-[10px] uppercase tracking-widest font-bold hidden lg:block z-50 relative">
@@ -1233,6 +1272,36 @@
                 card.addEventListener('mousemove', onMove);
                 card.addEventListener('mouseleave', onLeave);
                 card.addEventListener('mouseenter', (e) => onMove(e));
+            });
+        })();
+    </script>
+    <script>
+        // Loader: show for 20 seconds then fade out. Click to skip early.
+        (function () {
+            const loader = document.getElementById('site-loader');
+            if (!loader) return;
+
+            // Keep loader visible for 20s (20000ms)
+            const DURATION = 20000;
+            const FADE = 420;
+            let removed = false;
+
+            function hide() {
+                if (removed) return;
+                removed = true;
+                loader.classList.add('hidden');
+                setTimeout(() => {
+                    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+                }, FADE + 50);
+            }
+
+            // Auto-hide after duration
+            const timer = setTimeout(hide, DURATION);
+
+            // Allow users to click to skip
+            loader.addEventListener('click', function () {
+                clearTimeout(timer);
+                hide();
             });
         })();
     </script>
