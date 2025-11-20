@@ -300,12 +300,13 @@
         }
 
         /* Looping morph: duration short so it feels lively; infinite while loader visible */
-        .morph-playing .logo-from { animation: logo-from-out 2600ms cubic-bezier(.2,.9,.3,1) infinite; }
-        .morph-playing .logo-to   { animation: logo-to-in  2600ms cubic-bezier(.2,.9,.3,1) infinite; }
+        /* Make morph duration longer (20s) to match user preference */
+        .morph-playing .logo-from { animation: logo-from-out 20000ms cubic-bezier(.2,.9,.3,1) infinite; }
+        .morph-playing .logo-to   { animation: logo-to-in  20000ms cubic-bezier(.2,.9,.3,1) infinite; }
 
         /* Slight pulsing glow for to-logo when present */
         @keyframes logo-glow { 0%{filter: drop-shadow(0 0 0 rgba(255,210,0,0));}50%{filter: drop-shadow(0 12px 28px rgba(255,210,0,0.12));}100%{filter: drop-shadow(0 0 0 rgba(255,210,0,0));} }
-        .morph-playing .logo-to { animation: logo-to-in 2600ms cubic-bezier(.2,.9,.3,1) infinite, logo-glow 2400ms ease-in-out infinite; }
+        .morph-playing .logo-to { animation: logo-to-in 20000ms cubic-bezier(.2,.9,.3,1) infinite, logo-glow 20000ms ease-in-out infinite; }
 
         /* Fallback single logo animation (keeps some motion if only one image present) */
         @keyframes loader-rotate-scale { 0%{transform:rotate(0deg) scale(0.96);}25%{transform:rotate(8deg) scale(1.03);}50%{transform:rotate(0deg) scale(1.08);}75%{transform:rotate(-6deg) scale(1.02);}100%{transform:rotate(0deg) scale(0.98);} }
@@ -467,9 +468,7 @@
             
             <div class="container mx-auto px-4 sm:px-6 relative z-10 pt-20 lg:pt-10">
                 <div class="max-w-4xl animate-fade-in-up">
-                    <div class="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white font-medium text-xs uppercase tracking-widest mb-6">
-                        <span class="w-2 h-2 rounded-full bg-jalo-yellow"></span> Nous offrons une supply chain end-to-end pour garantir l'excellence opérationnelle en Afrique de l'Ouest.
-                    </div>
+                    <!-- Hero badge removed as requested (redundant sentence) -->
                     <!-- Responsive font sizing for H1 -->
                     <h1 class="text-5xl sm:text-7xl lg:text-8xl font-heading text-white leading-[0.9] mb-8 tracking-tight">
                         LIBÉRER<br>
