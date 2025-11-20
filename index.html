@@ -53,79 +53,87 @@
     <script>
         // Custom follow cursor that changes icon per section (truck, ship, plane, warehouse)
         (function () {
-            const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-            const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (isTouch || reduce) return; // skip on touch or reduced motion
+            function initCursor() {
+                const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+                const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (isTouch || reduce) return; // skip on touch or reduced motion
 
-            const cursor = document.getElementById('custom-cursor');
-            if (!cursor) return;
+                const cursor = document.getElementById('custom-cursor');
+                if (!cursor) return;
 
-            // Map section id -> FontAwesome class
-            const mapping = {
-                'service-routier': 'fa-truck',
-                'service-maritime': 'fa-ship',
-                'service-aerien': 'fa-plane',
-                'overview': 'fa-warehouse',
-                'about': 'fa-warehouse'
-            };
+                // Map section id -> FontAwesome class
+                const mapping = {
+                    'service-routier': 'fa-truck',
+                    'service-maritime': 'fa-ship',
+                    'service-aerien': 'fa-plane',
+                    'overview': 'fa-warehouse',
+                    'about': 'fa-warehouse'
+                };
 
-            // Observe these sections
-            const sectionIds = Object.keys(mapping);
-            const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+                // Observe these sections
+                const sectionIds = Object.keys(mapping);
+                const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
 
-            // Positioning: follow pointer
-            let lastX = -9999, lastY = -9999;
-            document.documentElement.classList.add('has-custom-cursor');
+                // Positioning: follow pointer
+                let lastX = -9999, lastY = -9999;
+                document.documentElement.classList.add('has-custom-cursor');
 
-            window.addEventListener('mousemove', (e) => {
-                lastX = e.clientX;
-                lastY = e.clientY;
-                cursor.style.setProperty('--cx', (lastX) + 'px');
-                cursor.style.setProperty('--cy', (lastY) + 'px');
-                // move via transform for smoothness
-                cursor.style.transform = `translate3d(${lastX}px, ${lastY}px, 0) scale(1)`;
-            }, { passive: true });
+                window.addEventListener('mousemove', (e) => {
+                    lastX = e.clientX;
+                    lastY = e.clientY;
+                    cursor.style.setProperty('--cx', (lastX) + 'px');
+                    cursor.style.setProperty('--cy', (lastY) + 'px');
+                    // move via transform for smoothness
+                    cursor.style.transform = `translate3d(${lastX}px, ${lastY}px, 0) scale(1)`;
+                }, { passive: true });
 
-            // IntersectionObserver to detect which section is prominent
-            const obs = new IntersectionObserver((entries) => {
-                // pick the entry with largest intersectionRatio
-                let best = null;
-                entries.forEach(en => {
-                    if (!best || en.intersectionRatio > best.intersectionRatio) best = en;
-                });
-                if (best && best.isIntersecting) {
-                    const id = best.target.id;
-                    const iconClass = mapping[id] || 'fa-circle';
-                    const iconEl = cursor.querySelector('.cursor-icon');
-                    if (iconEl) {
-                        // update class list, keep 'cursor-icon' and 'fas'
-                        iconEl.className = `cursor-icon fas ${iconClass}`;
+                // IntersectionObserver to detect which section is prominent
+                const obs = new IntersectionObserver((entries) => {
+                    // pick the entry with largest intersectionRatio
+                    let best = null;
+                    entries.forEach(en => {
+                        if (!best || en.intersectionRatio > best.intersectionRatio) best = en;
+                    });
+                    if (best && best.isIntersecting) {
+                        const id = best.target.id;
+                        const iconClass = mapping[id] || 'fa-circle';
+                        const iconEl = cursor.querySelector('.cursor-icon');
+                        if (iconEl) {
+                            // update class list, keep 'cursor-icon' and 'fas'
+                            iconEl.className = `cursor-icon fas ${iconClass}`;
+                        }
+                        // small active pulse
+                        cursor.classList.add('active');
+                        setTimeout(() => cursor.classList.remove('active'), 220);
                     }
-                    // small active pulse
-                    cursor.classList.add('active');
-                    setTimeout(() => cursor.classList.remove('active'), 220);
-                }
-            }, { threshold: [0, 0.15, 0.35, 0.6] });
+                }, { threshold: [0, 0.15, 0.35, 0.6] });
 
-            sections.forEach(s => obs.observe(s));
+                sections.forEach(s => obs.observe(s));
 
-            // Also change based on scroll position if no section matched
-            window.addEventListener('scroll', () => {
-                // if nothing visible, default to truck
-                const inView = sections.some(s => {
-                    const r = s.getBoundingClientRect();
-                    return r.top < window.innerHeight * 0.6 && r.bottom > window.innerHeight * 0.2;
+                // Also change based on scroll position if no section matched
+                window.addEventListener('scroll', () => {
+                    // if nothing visible, default to truck
+                    const inView = sections.some(s => {
+                        const r = s.getBoundingClientRect();
+                        return r.top < window.innerHeight * 0.6 && r.bottom > window.innerHeight * 0.2;
+                    });
+                    if (!inView) {
+                        const iconEl = cursor.querySelector('.cursor-icon');
+                        if (iconEl) iconEl.className = 'cursor-icon fas fa-truck';
+                    }
+                }, { passive: true });
+
+                // Clean up on unload
+                window.addEventListener('beforeunload', () => {
+                    document.documentElement.classList.remove('has-custom-cursor');
                 });
-                if (!inView) {
-                    const iconEl = cursor.querySelector('.cursor-icon');
-                    if (iconEl) iconEl.className = 'cursor-icon fas fa-truck';
-                }
-            }, { passive: true });
+            }
 
-            // Clean up on unload
-            window.addEventListener('beforeunload', () => {
-                document.documentElement.classList.remove('has-custom-cursor');
-            });
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCursor);
+            } else {
+                initCursor();
+            }
         })();
     </script>
     <script>
