@@ -68,35 +68,31 @@
         // Improved theme manager: supports 'light' | 'dark' | 'system'
         (function () {
             const storageKey = 'site-theme'; // values: 'dark'|'light'|'system'
-            const desktopToggle = document.getElementById('theme-toggle');
-            const desktopIcon = document.getElementById('theme-icon');
-            const mobileToggle = document.getElementById('mobile-theme-toggle');
-            const mobileIcon = document.getElementById('mobile-theme-icon');
-
             const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
 
             function setAttributeTheme(t) {
-                // set attribute for CSS selectors and class on body for older rules
                 document.documentElement.setAttribute('data-theme', t === 'system' ? (mq && mq.matches ? 'dark' : 'light') : t);
                 if (t === 'dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
             }
 
-            function updateUI(t) {
-                // update icons and aria states
-                const active = (t === 'system' ? (mq && mq.matches ? 'dark' : 'light') : t);
+            function readTheme() { return localStorage.getItem(storageKey) || 'system'; }
+            function saveTheme(pref) { localStorage.setItem(storageKey, pref); }
+
+            function updateUIForElements(pref) {
+                const desktopToggle = document.getElementById('theme-toggle');
+                const desktopIcon = document.getElementById('theme-icon');
+                const mobileToggle = document.getElementById('mobile-theme-toggle');
+                const mobileIcon = document.getElementById('mobile-theme-icon');
+                const active = (pref === 'system' ? (mq && mq.matches ? 'dark' : 'light') : pref);
                 if (desktopToggle) desktopToggle.setAttribute('aria-pressed', active === 'dark' ? 'true' : 'false');
                 if (mobileToggle) mobileToggle.setAttribute('aria-pressed', active === 'dark' ? 'true' : 'false');
                 if (desktopIcon) desktopIcon.className = active === 'dark' ? 'fas fa-sun text-yellow-300' : 'fas fa-moon';
                 if (mobileIcon) mobileIcon.className = active === 'dark' ? 'fas fa-sun text-yellow-300' : 'fas fa-moon';
             }
 
-            function saveTheme(pref) { localStorage.setItem(storageKey, pref); }
-
-            function readTheme() { return localStorage.getItem(storageKey) || 'system'; }
-
             function apply(pref, save = false) {
                 setAttributeTheme(pref);
-                updateUI(pref);
+                updateUIForElements(pref);
                 if (save) saveTheme(pref);
             }
 
@@ -107,20 +103,28 @@
                 apply(next, true);
             }
 
-            // Attach handlers
-            if (desktopToggle) desktopToggle.addEventListener('click', cycleTheme);
-            if (mobileToggle) mobileToggle.addEventListener('click', cycleTheme);
+            // Attach handlers and init after DOM is ready so elements exist
+            function init() {
+                const desktopToggle = document.getElementById('theme-toggle');
+                const mobileToggle = document.getElementById('mobile-theme-toggle');
+                if (desktopToggle) desktopToggle.addEventListener('click', cycleTheme);
+                if (mobileToggle) mobileToggle.addEventListener('click', cycleTheme);
 
-            // Listen to system preference changes if user selected 'system'
-            if (mq && mq.addEventListener) mq.addEventListener('change', () => {
-                if (readTheme() === 'system') apply('system', false);
-            });
+                // respond to system changes when user chose 'system'
+                if (mq && mq.addEventListener) mq.addEventListener('change', () => {
+                    if (readTheme() === 'system') apply('system', false);
+                });
 
-            // Init
-            window.addEventListener('load', function () {
+                // apply stored preference (or system) immediately
                 const pref = readTheme();
                 apply(pref, false);
-            });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
         })();
     </script>
 
@@ -297,6 +301,9 @@
 
         /* Slight pulsing of the container text */
         #site-loader .loader-caption { opacity: 0.95; }
+        /* Loader progress bar */
+        #loader-bar { width: 0%; }
+        #site-loader .loader-caption, #site-loader #loader-percent { transition: color 180ms ease; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen overflow-x-hidden antialiased selection:bg-jalo-yellow selection:text-black">
@@ -307,7 +314,13 @@
             <div class="loader-logo-wrapper" aria-hidden="true">
                 <img id="loader-logo" src="https://media.licdn.com/dms/image/v2/D4D05AQE0EdrXAzKFlg/videocover-low/B4DZkFKWapG8CE-/0/1756728308165?e=2147483647&v=beta&t=pjSc8lMKkEcZXCXFkHVHcsvcst_lG_fbInreo5Qm2Eo" alt="Jalo Logistics" class="h-28 w-28 sm:h-36 sm:w-36 object-contain"/>
             </div>
-            <div class="loader-caption text-sm text-gray-600 dark:text-gray-300">Chargement — merci de patienter</div>
+            <div class="w-64 max-w-full">
+                <div class="loader-caption text-sm text-gray-600 dark:text-gray-300 text-center mb-2">Chargement — merci de patienter</div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                    <div id="loader-bar" class="h-3 bg-jalo-yellow w-0 transition-all duration-200"></div>
+                </div>
+                <div class="mt-2 text-center text-sm text-gray-600 dark:text-gray-300"><span id="loader-percent">0</span>%</div>
+            </div>
         </div>
     </div>
     <!-- END: Fullscreen Loader -->
@@ -1276,32 +1289,69 @@
         })();
     </script>
     <script>
-        // Loader: show for 20 seconds then fade out. Click to skip early.
+        // Loader: simulated progress bar for 20s, finishes early on window.load, click to skip.
         (function () {
             const loader = document.getElementById('site-loader');
-            if (!loader) return;
+            const bar = document.getElementById('loader-bar');
+            const percentEl = document.getElementById('loader-percent');
+            if (!loader || !bar || !percentEl) return;
 
-            // Keep loader visible for 20s (20000ms)
-            const DURATION = 20000;
+            const TOTAL = 20000; // 20s
             const FADE = 420;
-            let removed = false;
+            const step = 100; // ms
+            let start = performance.now();
+            let rafId = null;
+            let finished = false;
 
-            function hide() {
-                if (removed) return;
-                removed = true;
-                loader.classList.add('hidden');
-                setTimeout(() => {
-                    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-                }, FADE + 50);
+            function setProgress(p) {
+                p = Math.max(0, Math.min(100, Math.round(p)));
+                bar.style.width = p + '%';
+                percentEl.textContent = p;
             }
 
-            // Auto-hide after duration
-            const timer = setTimeout(hide, DURATION);
+            // Simulated easing: quicker at start, slower later
+            function ease(t) { return 1 - Math.pow(1 - t, 2); }
 
-            // Allow users to click to skip
+            function tick(now) {
+                const elapsed = now - start;
+                const raw = Math.min(1, elapsed / TOTAL);
+                // apply easing
+                const eased = ease(raw);
+                setProgress(eased * 100);
+                if (elapsed < TOTAL && !finished) {
+                    rafId = window.requestAnimationFrame(tick);
+                } else if (!finished) {
+                    finishAndHide();
+                }
+            }
+
+            function finishAndHide() {
+                finished = true;
+                setProgress(100);
+                // small delay so user sees 100%
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    setTimeout(() => loader.remove(), FADE + 50);
+                }, 350);
+            }
+
+            // start ticking
+            rafId = window.requestAnimationFrame(tick);
+
+            // If window load happens, finish early
+            window.addEventListener('load', function () {
+                if (!finished) {
+                    // accelerate to 100%
+                    start = performance.now() - TOTAL; // force raw=1 on next tick
+                }
+            }, { once: true });
+
+            // allow click to skip immediately
             loader.addEventListener('click', function () {
-                clearTimeout(timer);
-                hide();
+                if (!finished) {
+                    if (rafId) cancelAnimationFrame(rafId);
+                    finishAndHide();
+                }
             });
         })();
     </script>
