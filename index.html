@@ -72,13 +72,13 @@
             const icon = document.getElementById('theme-icon');
 
             function applyTheme(theme, save = false) {
-                const html = document.documentElement;
+                const body = document.body;
                 if (theme === 'dark') {
-                    html.classList.add('dark');
+                    body.classList.add('dark');
                     if (toggle) toggle.setAttribute('aria-pressed', 'true');
                     if (icon) icon.className = 'fas fa-sun text-yellow-300';
                 } else {
-                    html.classList.remove('dark');
+                    body.classList.remove('dark');
                     if (toggle) toggle.setAttribute('aria-pressed', 'false');
                     if (icon) icon.className = 'fas fa-moon';
                 }
@@ -97,7 +97,7 @@
             }
 
             window.toggleTheme = function toggleTheme() {
-                const isDark = document.documentElement.classList.contains('dark');
+                const isDark = document.body.classList.contains('dark');
                 applyTheme(isDark ? 'light' : 'dark', true);
             };
 
@@ -138,6 +138,8 @@
         body {
             background-color: var(--bg);
             color: var(--text);
+            padding-top: var(--header-height); /* ensure content isn't hidden under fixed header */
+            transition: background-color 220ms ease, color 220ms ease;
         }
 
         /* Glassmorphism Header */
