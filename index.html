@@ -50,6 +50,20 @@
             }
         }
     </script>
+    <script>
+        // Update CSS var --header-height so `scroll-padding-top` matches the fixed header height
+        (function () {
+            function updateHeaderHeight() {
+                var header = document.getElementById('main-header');
+                if (!header) return;
+                var h = Math.ceil(header.getBoundingClientRect().height);
+                document.documentElement.style.setProperty('--header-height', h + 'px');
+            }
+            // run on load and resize (also a short timeout to catch late layout changes)
+            window.addEventListener('load', function () { updateHeaderHeight(); setTimeout(updateHeaderHeight, 250); });
+            window.addEventListener('resize', updateHeaderHeight);
+        })();
+    </script>
 
     <style>
         /* UI Enhancements */
@@ -92,6 +106,15 @@
             padding-right: env(safe-area-inset-right, 1rem);
         }
 
+        /* Ensure fixed header doesn't hide anchored content when jumping to anchors */
+        :root {
+            --header-height: 80px; /* fallback */
+        }
+
+        /* Use the header height as a scroll offset for in-page anchor navigation */
+        html {
+            scroll-padding-top: var(--header-height);
+        }
         /* Responsive timeline line */
         #what-we-do .vertical-connector-line {
             left: 1.5rem; /* left-6 on mobile */
