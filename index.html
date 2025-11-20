@@ -134,6 +134,71 @@
                 // apply stored preference (or system) immediately
                 const pref = readTheme();
                 apply(pref, false);
+
+                // --- Enhanced UX: context menu + long-press for 'system' option ---
+                const menu = document.getElementById('theme-menu');
+
+                function showThemeMenu(x, y) {
+                    if (!menu) return;
+                    menu.classList.remove('hidden');
+                    // position with small offset to avoid covering the pointer
+                    const left = Math.min(window.innerWidth - 180, Math.max(8, x));
+                    const top = Math.min(window.innerHeight - 160, Math.max(8, y));
+                    menu.style.left = left + 'px';
+                    menu.style.top = top + 'px';
+                    // ensure visible class after layout
+                    requestAnimationFrame(() => menu.classList.add('visible'));
+                }
+
+                function hideThemeMenu() {
+                    if (!menu) return;
+                    menu.classList.remove('visible');
+                    setTimeout(() => menu.classList.add('hidden'), 160);
+                }
+
+                // contextmenu (right click) opens our custom menu on toggles
+                [desktopToggle, mobileToggle].forEach(btn => {
+                    if (!btn) return;
+                    btn.addEventListener('contextmenu', function (e) {
+                        e.preventDefault();
+                        showThemeMenu(e.pageX || e.clientX, e.pageY || e.clientY);
+                    });
+                });
+
+                // hide menu on outside click or Escape
+                document.addEventListener('click', function (e) {
+                    if (!menu) return;
+                    if (!menu.contains(e.target) && e.target !== desktopToggle && e.target !== mobileToggle) hideThemeMenu();
+                });
+                document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideThemeMenu(); });
+
+                // menu option clicks
+                if (menu) {
+                    menu.querySelectorAll('[data-theme-choice]').forEach(el => {
+                        el.addEventListener('click', function (ev) {
+                            const choice = el.getAttribute('data-theme-choice');
+                            if (choice) apply(choice, true);
+                            hideThemeMenu();
+                        });
+                    });
+                }
+
+                // long-press sets 'system' (desktop and touch)
+                function attachLongPress(el) {
+                    if (!el) return;
+                    let timer = null;
+                    const THRESHOLD = 650; // ms
+                    const start = (e) => { e.preventDefault && e.preventDefault(); if (timer) clearTimeout(timer); timer = setTimeout(() => { apply('system', true); /* brief visual feedback */ el.classList.add('ring-2', 'ring-jalo-yellow'); setTimeout(()=>el.classList.remove('ring-2','ring-jalo-yellow'),400); }, THRESHOLD); };
+                    const cancel = () => { if (timer) { clearTimeout(timer); timer = null; } };
+                    el.addEventListener('mousedown', start);
+                    el.addEventListener('touchstart', start);
+                    el.addEventListener('mouseup', cancel);
+                    el.addEventListener('mouseleave', cancel);
+                    el.addEventListener('touchend', cancel);
+                    el.addEventListener('touchcancel', cancel);
+                }
+                attachLongPress(desktopToggle);
+                attachLongPress(mobileToggle);
             }
 
             if (document.readyState === 'loading') {
@@ -279,6 +344,15 @@
         /* Card text tweaks for legibility */
         [data-theme="dark"] .text-gray-600, .dark .text-gray-600 { color: var(--muted-strong) !important; }
         [data-theme="dark"] .text-gray-400, .dark .text-gray-400 { color: #9aa3ad !important; }
+
+        /* Theme context menu (small popup) */
+        #theme-menu { position: fixed; z-index: 99999; min-width: 160px; border-radius: 8px; padding: 6px; box-shadow: 0 8px 32px rgba(2,6,23,0.6); transform-origin: top left; transition: opacity 160ms ease, transform 160ms ease; }
+        #theme-menu.hidden { opacity: 0; pointer-events: none; transform: scale(0.96); }
+        #theme-menu.visible { opacity: 1; pointer-events: auto; transform: scale(1); }
+        #theme-menu button { display: block; width: 100%; text-align: left; padding: 8px 10px; border-radius: 6px; background: transparent; border: none; color: inherit; }
+        #theme-menu button:hover { background: rgba(0,0,0,0.04); }
+        [data-theme="dark"] #theme-menu { background: #0d1114; color: var(--text); }
+        #theme-menu .choice-label { display: inline-flex; gap: .6rem; align-items: center; }
 
         /* Accent (jalo yellow) remains the same but ensure contrast in dark */
         .jalo-accent {
@@ -1189,6 +1263,14 @@
             </div>
         </div>
     </footer>
+
+    <!-- Theme selection menu (context menu / long-press) -->
+    <div id="theme-menu" class="hidden" role="menu" aria-hidden="true">
+        <button data-theme-choice="light" role="menuitem"><span class="choice-label"><i class="fas fa-sun"></i> Clair</span></button>
+        <button data-theme-choice="dark" role="menuitem"><span class="choice-label"><i class="fas fa-moon"></i> Sombre</span></button>
+        <div class="h-px my-1 bg-gray-100/10"></div>
+        <button data-theme-choice="system" role="menuitem"><span class="choice-label"><i class="fas fa-desktop"></i> Système (préférence)</span></button>
+    </div>
 
     <script>
         // Mobile Menu Logic with focus trap and accessible states
