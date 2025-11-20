@@ -33,11 +33,17 @@
                     animation: {
                         'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'flash-stat': 'flashStat 1.2s ease-in-out infinite', /* Animation plus rapide pour un effet de clignotement marqué */
                     },
                     keyframes: {
                         fadeInUp: {
                             '0%': { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        flashStat: { /* Définition de l'animation de clignotement */
+                            '0%, 100%': { color: 'var(--tw-colors-jalo-yellow)', transform: 'scale(1)' },
+                            '50%': { color: '#FFF', transform: 'scale(1.05)' },
                         }
                     }
                 }
@@ -78,6 +84,41 @@
         /* Navigation Active State */
         .nav-link.active {
             color: #FFD200;
+        }
+
+        /* Responsive timeline line */
+        #what-we-do .vertical-connector-line {
+            left: 1.5rem; /* left-6 on mobile */
+        }
+        @media (min-width: 768px) {
+             #what-we-do .vertical-connector-line {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        /* Gallery Image Style */
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease-in-out;
+            filter: brightness(0.9);
+        }
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.05);
+            filter: brightness(1);
+        }
+
+        /* Pulse for Stats */
+        .stat-pulse-text {
+            /* Application de l'animation de clignotement */
+            animation: flash-stat 1.2s ease-in-out infinite;
+            /* Utilisation du text-shadow pour renforcer l'effet lumineux */
+            text-shadow: 0 0 10px rgba(255, 210, 0, 0.8);
+        }
+        .stat-card-bg {
+             /* Ajout d'un dégradé subtil pour un look plus premium */
+            background: linear-gradient(135deg, #1f1f1f, #000000);
         }
     </style>
 </head>
@@ -121,7 +162,7 @@
                                 <a href="#about" class="px-4 py-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-jalo-black transition-colors">Pourquoi Jalo</a>
                                 <a href="#what-we-do" class="px-4 py-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-jalo-black transition-colors">Ce Que Nous Faisons</a>
                                 <a href="#values" class="px-4 py-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-jalo-black transition-colors">Code J.A.L.L.O.O.G</a>
-                                <a href="#engagements" class="px-4 py-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-jalo-black transition-colors">Engagements</a>
+                                <a href="#gallery" class="px-4 py-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-jalo-black transition-colors">Nos Réalisations</a>
                                 <a href="#proof" class="px-4 py-3 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-jalo-black transition-colors">Success Story</a>
                             </div>
                         </div>
@@ -143,25 +184,25 @@
                         </div>
                     </div>
 
-                    <a href="#contact" class="bg-jalo-yellow text-jalo-black border-2 border-jalo-yellow px-4 md:px-6 py-2 md:py-2.5 text-sm font-bold uppercase tracking-wide rounded-sm hover:bg-black hover:text-jalo-yellow hover:border-black transition-all">
+                    <a href="#contact" class="bg-jalo-yellow text-jalo-black border-2 border-jalo-yellow px-6 py-2.5 text-sm font-bold uppercase tracking-wide rounded-sm hover:bg-black hover:text-jalo-yellow hover:border-black transition-all">
                         Devis Express
                     </a>
                 </nav>
 
                 <!-- Mobile Toggle -->
-                <button id="mobile-toggle" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="lg:hidden text-2xl text-black focus:outline-none" onclick="toggleMobileMenu()">
+                <button class="lg:hidden text-2xl text-black focus:outline-none" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 flex flex-col" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
-                <div class="p-6 flex justify-between items-center border-b border-gray-100">
-                <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo logo" class="h-10 w-auto">
-                <button onclick="toggleMobileMenu()" aria-label="Close menu" class="text-2xl text-black"><i class="fas fa-times"></i></button>
+        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 flex flex-col">
+            <div class="p-6 flex justify-between items-center border-b border-gray-100">
+                <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo" class="h-10">
+                <button onclick="toggleMobileMenu()" class="text-2xl text-black"><i class="fas fa-times"></i></button>
             </div>
-                <div class="p-6 overflow-y-auto flex-grow space-y-6">
+            <div class="p-6 overflow-y-auto flex-grow space-y-6">
                 <div class="space-y-4">
                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Navigation</p>
                     <a href="#home" onclick="toggleMobileMenu()" class="block text-xl font-bold text-gray-900">Accueil</a>
@@ -185,21 +226,23 @@
         <!-- 1. HOME HERO -->
         <section id="home" class="relative h-screen min-h-[700px] flex items-center overflow-hidden">
             <div class="absolute inset-0 bg-black">
+                <!-- Responsive background image -->
                 <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-50 scale-105 animate-[pulse_10s_infinite]"></div>
                 <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
             </div>
             
-            <div class="container mx-auto px-6 relative z-10 pt-10">
+            <div class="container mx-auto px-6 relative z-10 pt-20 lg:pt-10">
                 <div class="max-w-4xl animate-fade-in-up">
                     <div class="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white font-medium text-xs uppercase tracking-widest mb-6">
                         <span class="w-2 h-2 rounded-full bg-jalo-yellow"></span> Supply Chain End-to-End
                     </div>
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-heading text-white leading-tight md:leading-[0.95] mb-6 md:mb-8 tracking-tight">
+                    <!-- Responsive font sizing for H1 -->
+                    <h1 class="text-5xl sm:text-7xl lg:text-8xl font-heading text-white leading-[0.9] mb-8 tracking-tight">
                         LIBÉRER<br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-jalo-yellow to-yellow-200">VOTRE POTENTIEL</span><br>
                         LOGISTIQUE.
                     </h1>
-                    <p class="text-base sm:text-lg md:text-xl text-gray-300 mb-8 md:mb-10 max-w-2xl font-light leading-relaxed">
+                    <p class="text-lg md:text-2xl text-gray-300 mb-10 max-w-2xl font-light leading-relaxed">
                         Nous transformons la complexité en avantage concurrentiel. Du fournisseur à l'entrepôt, nous prenons les risques pour que vous preniez les parts de marché.
                     </p>
                     <div class="flex flex-wrap gap-4">
@@ -214,9 +257,42 @@
             </div>
             
             <!-- Scroll Indicator -->
-            <a href="#overview" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/50 hover:text-jalo-yellow animate-bounce transition-colors">
+            <a href="#stats-flash" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/50 hover:text-jalo-yellow animate-bounce transition-colors">
                 <i class="fas fa-chevron-down text-3xl"></i>
             </a>
+        </section>
+
+        <!-- 1b. STATS FLASH -->
+        <section id="stats-flash" class="bg-jalo-black py-16 text-white overflow-hidden border-t-4 border-jalo-yellow">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <span class="text-jalo-yellow font-bold uppercase tracking-widest text-sm mb-2 block">NOTRE FONDATION</span>
+                    <h2 class="text-3xl sm:text-4xl font-heading mb-4 text-white">BÂTIS SUR DU SOLIDE</h2>
+                </div>
+                <!-- Grille des Stats - Correction des marges et paddings pour la robustesse sur mobile -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center max-w-6xl mx-auto">
+                    <!-- Stat 1 -->
+                    <div class="p-4 sm:p-6 rounded-xl stat-card-bg border-2 border-jalo-yellow/50 shadow-lg">
+                        <div class="text-4xl sm:text-5xl font-heading mb-1 stat-pulse-text">15 000 m²</div>
+                        <div class="text-sm uppercase font-bold tracking-wider text-gray-400">D'ENTREPÔTS</div>
+                    </div>
+                    <!-- Stat 2 -->
+                    <div class="p-4 sm:p-6 rounded-xl stat-card-bg border-2 border-jalo-yellow/50 shadow-lg">
+                        <div class="text-4xl sm:text-5xl font-heading mb-1 stat-pulse-text">10 000 m²</div>
+                        <div class="text-sm uppercase font-bold tracking-wider text-gray-400">AU PORT D'ABIDJAN</div>
+                    </div>
+                    <!-- Stat 3 -->
+                    <div class="p-4 sm:p-6 rounded-xl stat-card-bg border-2 border-jalo-yellow/50 shadow-lg">
+                        <div class="text-4xl sm:text-5xl font-heading mb-1 stat-pulse-text">3 MILLIARDS</div>
+                        <div class="text-sm uppercase font-bold tracking-wider text-gray-400">CAUTIONS DOUANIÈRES</div>
+                    </div>
+                    <!-- Stat 4 -->
+                    <div class="p-4 sm:p-6 rounded-xl stat-card-bg border-2 border-jalo-yellow/50 shadow-lg">
+                        <div class="text-4xl sm:text-5xl font-heading mb-1 stat-pulse-text">2 MILLIARDS</div>
+                        <div class="text-sm uppercase font-bold tracking-wider text-gray-400">LIGNE D'ESCOMPTE</div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- 2. OVERVIEW (Bento Grid) -->
@@ -228,22 +304,23 @@
                     <p class="text-gray-500 max-w-2xl mx-auto">Une approche radicalement différente de la logistique traditionnelle.</p>
                 </div>
                 
+                <!-- Responsive Bento Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
                     <!-- Card 1 -->
-                    <div class="bento-card md:col-span-2 bg-jalo-black text-white p-10 rounded-3xl relative overflow-hidden group">
+                    <div class="bento-card md:col-span-2 bg-jalo-black text-white p-6 sm:p-10 rounded-3xl relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-64 h-64 bg-jalo-yellow opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 group-hover:opacity-20 transition-opacity duration-500"></div>
-                        <i class="fas fa-hand-holding-usd text-5xl mb-6 text-jalo-yellow"></i>
-                        <h3 class="text-2xl font-bold mb-4">On ne délègue pas tout. On opère.</h3>
-                        <p class="text-gray-400 text-lg leading-relaxed">Nous sommes ancrés localement. Nous connaissons le terrain, les douaniers, les routes. Pas de sous-traitance aveugle, mais une maîtrise totale.</p>
+                        <i class="fas fa-hand-holding-usd text-4xl sm:text-5xl mb-6 text-jalo-yellow"></i>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-4">On ne délègue pas tout. On opère.</h3>
+                        <p class="text-gray-400 text-base sm:text-lg leading-relaxed">Nous sommes ancrés localement. Nous connaissons le terrain, les douaniers, les routes. Pas de sous-traitance aveugle, mais une maîtrise totale.</p>
                     </div>
 
                     <!-- Card 2 -->
-                    <div class="bento-card md:row-span-2 bg-gray-100 p-10 rounded-3xl border border-gray-200 flex flex-col justify-between group hover:bg-white hover:border-jalo-yellow">
+                    <div class="bento-card md:row-span-2 bg-gray-100 p-6 sm:p-10 rounded-3xl border border-gray-200 flex flex-col justify-between group hover:bg-white hover:border-jalo-yellow">
                         <div>
-                            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 group-hover:bg-jalo-yellow transition-colors">
-                                <i class="fas fa-award text-2xl text-black"></i>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 group-hover:bg-jalo-yellow transition-colors">
+                                <i class="fas fa-award text-xl sm:text-2xl text-black"></i>
                             </div>
-                            <h3 class="text-2xl font-bold mb-4">Excellence Industrielle</h3>
+                            <h3 class="text-xl sm:text-2xl font-bold mb-4">Excellence Industrielle</h3>
                             <p class="text-gray-600 leading-relaxed">Standards internationaux, rigueur absolue.</p>
                         </div>
                         <div class="mt-8">
@@ -255,17 +332,17 @@
                     </div>
 
                     <!-- Card 3 -->
-                    <div class="bento-card bg-white p-10 rounded-3xl border border-gray-200 shadow-sm group">
-                        <i class="fas fa-laptop-code text-4xl mb-6 text-gray-300 group-hover:text-jalo-yellow transition-colors"></i>
+                    <div class="bento-card bg-white p-6 sm:p-10 rounded-3xl border border-gray-200 shadow-sm group">
+                        <i class="fas fa-laptop-code text-3xl sm:text-4xl mb-6 text-gray-300 group-hover:text-jalo-yellow transition-colors"></i>
                         <h3 class="text-xl font-bold mb-2">Data-Driven</h3>
                         <p class="text-gray-500">Avec SOFTLOGIS, la donnée devient décision.</p>
                     </div>
 
                     <!-- Card 4 -->
-                    <a href="#proof" class="bento-card bg-jalo-yellow p-8 md:p-10 rounded-3xl shadow-lg flex flex-col justify-center items-center text-center cursor-pointer group">
-                        <h3 class="text-4xl font-heading mb-2 text-black">NEEMBA</h3>
+                    <a href="#proof" class="bento-card bg-jalo-yellow p-6 sm:p-10 rounded-3xl shadow-lg flex flex-col justify-center items-center text-center cursor-pointer group">
+                        <h3 class="text-3xl sm:text-4xl font-heading mb-2 text-black">NEEMBA</h3>
                         <p class="font-bold text-black/70 mb-4 group-hover:text-black">Voir le Case Study</p>
-                        <i class="fas fa-arrow-right text-xl bg-black text-white w-10 h-10 flex items-center justify-center rounded-full group-hover:scale-110 transition-transform"></i>
+                        <i class="fas fa-arrow-right text-lg sm:text-xl bg-black text-white w-10 h-10 flex items-center justify-center rounded-full group-hover:scale-110 transition-transform"></i>
                     </a>
                 </div>
             </div>
@@ -283,10 +360,9 @@
                         </p>
                     </div>
                     <div class="md:w-1/2">
+                        <!-- Responsive container for iframe -->
                         <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                            <div class="w-full aspect-video">
-                                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7372203103678435328?compact=1" frameborder="0" allowfullscreen="" title="Embedded post" class="w-full h-full"></iframe>
-                            </div>
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7372203103678435328?compact=1" height="500" width="100%" frameborder="0" allowfullscreen="" title="Embedded post" class="w-full min-h-[500px]"></iframe>
                         </div>
                     </div>
                 </div>
@@ -294,28 +370,28 @@
         </section>
 
         <!-- 3. ABOUT (Pourquoi Jalo) -->
-        <section id="about" class="py-16 sm:py-24 bg-white">
+        <section id="about" class="py-24 bg-white">
             <div class="container mx-auto px-6 max-w-6xl">
-                <div class="flex flex-col md:flex-row items-center gap-16 px-4 sm:px-6 lg:px-0">
+                <div class="flex flex-col md:flex-row items-center gap-16">
                     <div class="md:w-1/2">
                         <span class="text-jalo-yellow font-bold uppercase tracking-widest text-sm mb-2 block">Notre Genèse</span>
-                        <h1 class="text-5xl font-heading leading-tight mb-8">L'INTELLIGENCE LOCALE, <br>INDUSTRIALISÉE.</h1>
+                        <h1 class="text-4xl sm:text-5xl font-heading leading-tight mb-8">L'INTELLIGENCE LOCALE, <br>INDUSTRIALISÉE.</h1>
                         
-                        <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                        <p class="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed">
                             En Afrique, les petits boutiquiers de quartier arrivent à servir 1000 personnes avec 20m² sans rupture, sans stock mort. Ils savent anticiper, gérer leurs flux, et servir avec efficacité.
                         </p>
                         <div class="p-6 bg-gray-50 border-l-4 border-jalo-yellow rounded-r-xl mb-6">
-                            <p class="text-lg font-bold text-gray-800 italic">
+                            <p class="text-base sm:text-lg font-bold text-gray-800 italic">
                                 "JALO s'est inspiré de cette intelligence locale pour bâtir un modèle professionnel, fiable, industrialisé."
                             </p>
                         </div>
-                        <p class="text-gray-600 text-lg leading-relaxed">
+                        <p class="text-base sm:text-lg text-gray-600 leading-relaxed">
                             Aujourd'hui, nous aidons nos clients à vendre plus, mieux, plus vite, pendant que nous prenons l'entière responsabilité de leur supply chain.
                         </p>
                     </div>
                     <div class="md:w-1/2 relative">
                         <div class="absolute inset-0 bg-jalo-yellow rounded-3xl transform rotate-3"></div>
-                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Équipe JALO en action" class="relative z-10 rounded-3xl shadow-2xl filter grayscale hover:grayscale-0 transition duration-500 w-full h-auto object-cover">
+                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="relative z-10 rounded-3xl shadow-2xl filter grayscale hover:grayscale-0 transition duration-500">
                     </div>
                 </div>
             </div>
@@ -326,83 +402,109 @@
             <div class="container mx-auto px-6 max-w-5xl">
                 <div class="text-center mb-20">
                     <span class="text-jalo-yellow font-bold uppercase tracking-widest">Périmètre Opérationnel</span>
-                    <h2 class="text-5xl font-heading mt-4 mb-6">CE QUE NOUS FAISONS</h2>
-                    <p class="text-xl text-gray-600">Nous opérons toute la chaîne logistique, de bout en bout.</p>
+                    <h2 class="text-4xl sm:text-5xl font-heading mt-4 mb-6">CE QUE NOUS FAISONS</h2>
+                    <p class="text-lg sm:text-xl text-gray-600">Nous opérons toute la chaîne logistique, de bout en bout.</p>
                 </div>
 
                 <div class="space-y-8 relative">
-                    <!-- Vertical Connector Line -->
-                    <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gray-200 transform md:-translate-x-1/2 hidden md:block"></div>
+                    <!-- Vertical Connector Line (Responsive class added) -->
+                    <div class="absolute left-6 top-0 bottom-0 w-1 bg-gray-200 transform hidden md:block vertical-connector-line"></div>
+                    <div class="absolute left-6 top-0 bottom-0 w-1 bg-gray-200 transform md:hidden"></div>
 
-                    <!-- Step 1 -->
+                    <!-- Step 1: Chez le fournisseur (mise à FOB) -->
                     <div class="flex flex-col md:flex-row items-center gap-8 relative group">
-                        <div class="md:w-1/2 md:text-right p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:mr-12 z-10">
-                            <h3 class="text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">01. CHEZ LE FOURNISSEUR</h3>
+                        <div class="w-full md:w-1/2 md:text-right p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:mr-12 z-10 ml-8 md:ml-0">
+                            <h3 class="text-xl sm:text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">01. CHEZ LE FOURNISSEUR</h3>
                             <p class="text-gray-600">Mise à FOB. Nous prenons le relais dès la sortie de l'usine.</p>
                         </div>
+                        <!-- Circle Icon for Desktop -->
                         <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-jalo-yellow rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg hidden md:flex font-bold text-black">
                             <i class="fas fa-warehouse"></i>
                         </div>
+                        <!-- Circle Icon for Mobile -->
+                        <div class="absolute left-6 top-6 w-12 h-12 bg-jalo-yellow rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg md:hidden font-bold text-black">
+                            <i class="fas fa-warehouse text-lg"></i>
+                        </div>
                         <div class="md:w-1/2 hidden md:block"></div>
                     </div>
 
-                    <!-- Step 2 -->
+                    <!-- Step 2: Transport maritime / aérien -->
                     <div class="flex flex-col md:flex-row items-center gap-8 relative group">
                         <div class="md:w-1/2 hidden md:block"></div>
+                        <!-- Circle Icon for Desktop -->
                         <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-black text-white rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg hidden md:flex font-bold">
                             <i class="fas fa-ship"></i>
                         </div>
-                        <div class="md:w-1/2 md:text-left p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:ml-12 z-10">
-                            <h3 class="text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">02. TRANSPORT</h3>
-                            <p class="text-gray-600">Maritime ou Aérien. Optimisation des routes coûts/délais.</p>
+                        <!-- Circle Icon for Mobile -->
+                        <div class="absolute left-6 top-6 w-12 h-12 bg-black text-white rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg md:hidden font-bold">
+                            <i class="fas fa-ship text-lg"></i>
+                        </div>
+                        <div class="w-full md:w-1/2 md:text-left p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:ml-12 z-10 ml-8 md:ml-0">
+                            <h3 class="text-xl sm:text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">02. TRANSPORT INTERNATIONAL</h3>
+                            <p class="text-gray-600">Transport maritime / aérien. Choix et exécution optimaux.</p>
                         </div>
                     </div>
 
-                    <!-- Step 3 -->
+                    <!-- Step 3: Douanes, transit, terminaux -->
                     <div class="flex flex-col md:flex-row items-center gap-8 relative group">
-                        <div class="md:w-1/2 md:text-right p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:mr-12 z-10">
-                            <h3 class="text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">03. FORMALITÉS</h3>
-                            <p class="text-gray-600">Douanes, Transit, Terminaux. Gestion de la complexité administrative.</p>
+                        <div class="w-full md:w-1/2 md:text-right p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:mr-12 z-10 ml-8 md:ml-0">
+                            <h3 class="text-xl sm:text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">03. FORMALITÉS À L'IMPORT</h3>
+                            <p class="text-gray-600">Douanes, transit, et gestion des terminaux portuaires/aéroportuaires.</p>
                         </div>
+                        <!-- Circle Icon for Desktop -->
                         <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-jalo-yellow rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg hidden md:flex font-bold text-black">
                             <i class="fas fa-file-signature"></i>
                         </div>
+                        <!-- Circle Icon for Mobile -->
+                        <div class="absolute left-6 top-6 w-12 h-12 bg-jalo-yellow rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg md:hidden font-bold text-black">
+                            <i class="fas fa-file-signature text-lg"></i>
+                        </div>
                         <div class="md:w-1/2 hidden md:block"></div>
                     </div>
 
-                    <!-- Step 4 -->
+                    <!-- Step 4: Entreposage sous douane ou hors douane -->
                     <div class="flex flex-col md:flex-row items-center gap-8 relative group">
                         <div class="md:w-1/2 hidden md:block"></div>
+                        <!-- Circle Icon for Desktop -->
                         <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-black text-white rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg hidden md:flex font-bold">
                             <i class="fas fa-cubes"></i>
                         </div>
-                        <div class="md:w-1/2 md:text-left p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:ml-12 z-10">
-                            <h3 class="text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">04. ENTREPOSAGE</h3>
-                            <p class="text-gray-600">Sous douane ou hors douane. Stockage sécurisé.</p>
+                        <!-- Circle Icon for Mobile -->
+                        <div class="absolute left-6 top-6 w-12 h-12 bg-black text-white rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg md:hidden font-bold">
+                            <i class="fas fa-cubes text-lg"></i>
+                        </div>
+                        <div class="w-full md:w-1/2 md:text-left p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:ml-12 z-10 ml-8 md:ml-0">
+                            <h3 class="text-xl sm:text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">04. GESTION DU STOCK</h3>
+                            <p class="text-gray-600">Entreposage sous douane ou hors douane. Sécurité et gestion des flux.</p>
                         </div>
                     </div>
 
-                    <!-- Step 5 -->
+                    <!-- Step 5: Livraison nationale ou sous-régionale -->
                     <div class="flex flex-col md:flex-row items-center gap-8 relative group">
-                        <div class="md:w-1/2 md:text-right p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:mr-12 z-10">
-                            <h3 class="text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">05. LIVRAISON</h3>
-                            <p class="text-gray-600">Nationale ou Sous-régionale. Dernier kilomètre maîtrisé.</p>
+                        <div class="w-full md:w-1/2 md:text-right p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100 md:mr-12 z-10 ml-8 md:ml-0">
+                            <h3 class="text-xl sm:text-2xl font-heading mb-2 text-black group-hover:text-jalo-yellow transition-colors">05. DISTRIBUTION FINALE</h3>
+                            <p class="text-gray-600">Livraison nationale ou sous-régionale. Maîtrise du dernier kilomètre.</p>
                         </div>
+                        <!-- Circle Icon for Desktop -->
                         <div class="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-jalo-yellow rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg hidden md:flex font-bold text-black">
                             <i class="fas fa-truck-loading"></i>
+                        </div>
+                        <!-- Circle Icon for Mobile -->
+                        <div class="absolute left-6 top-6 w-12 h-12 bg-jalo-yellow rounded-full border-4 border-white flex items-center justify-center z-20 shadow-lg md:hidden font-bold text-black">
+                            <i class="fas fa-truck-loading text-lg"></i>
                         </div>
                         <div class="md:w-1/2 hidden md:block"></div>
                     </div>
 
-                    <!-- Step 6 (Link to Digital) -->
+                    <!-- Step 6 (Link to Digital): Pilotage par indicateurs, traçabilité, excellence opérationnelle -->
                     <div class="relative z-20 mt-12">
                          <a href="#service-digital" class="block bg-black text-white p-10 rounded-3xl text-center shadow-2xl border-t-8 border-jalo-yellow transform transition hover:scale-105">
                             <div class="w-16 h-16 bg-jalo-yellow rounded-full flex items-center justify-center mx-auto mb-6 text-black text-2xl font-bold">
                                 <i class="fas fa-chart-line"></i>
                             </div>
-                            <h3 class="text-3xl font-heading mb-4">06. PILOTAGE GLOBAL</h3>
-                            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                                Traçabilité totale, indicateurs précis, excellence opérationnelle via <strong>SOFTLOGIS</strong>.
+                            <h3 class="text-2xl sm:text-3xl font-heading mb-4">06. PILOTAGE & EXCELLENCE</h3>
+                            <p class="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+                                Pilotage par indicateurs, traçabilité, excellence opérationnelle via <strong>SOFTLOGIS</strong>.
                             </p>
                         </a>
                     </div>
@@ -414,45 +516,45 @@
         <section id="values" class="py-24 bg-jalo-black text-white">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-20">
-                    <h2 class="text-5xl md:text-6xl font-heading text-jalo-yellow mb-6">CODE J.A.L.L.O.O.G</h2>
-                    <p class="text-xl text-gray-400 max-w-3xl mx-auto">Notre ADN. Ce qui nous guide chaque jour.</p>
+                    <h2 class="text-4xl sm:text-6xl font-heading text-jalo-yellow mb-6">CODE J.A.L.L.O.O.G</h2>
+                    <p class="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto">Notre ADN. Ce qui nous guide chaque jour.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                    <div class="p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
-                        <span class="text-5xl font-heading text-jalo-yellow block mb-4 opacity-50 group-hover:opacity-100 transition">J</span>
+                    <div class="p-6 sm:p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
+                        <span class="text-4xl sm:text-5xl font-heading text-jalo-yellow block mb-4 opacity-50 group-hover:opacity-100 transition">J</span>
                         <h3 class="text-xl font-bold mb-2">JUSTESSE</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Excellence dans chaque action : précision, ponctualité et fiabilité.</p>
                     </div>
-                    <div class="p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
-                        <span class="text-5xl font-heading text-white block mb-4 opacity-50 group-hover:opacity-100 transition">A</span>
+                    <div class="p-6 sm:p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
+                        <span class="text-4xl sm:text-5xl font-heading text-white block mb-4 opacity-50 group-hover:opacity-100 transition">A</span>
                         <h3 class="text-xl font-bold mb-2">ANTICIPATION</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Voir au-delà. Prévoir les besoins, prévenir les risques.</p>
                     </div>
-                    <div class="p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
-                        <span class="text-5xl font-heading text-jalo-yellow block mb-4 opacity-50 group-hover:opacity-100 transition">L</span>
+                    <div class="p-6 sm:p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
+                        <span class="text-4xl sm:text-5xl font-heading text-jalo-yellow block mb-4 opacity-50 group-hover:opacity-100 transition">L</span>
                         <h3 class="text-xl font-bold mb-2">LOYAUTÉ</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Fidèles à notre parole, à nos équipes, à nos clients. Toujours.</p>
                     </div>
-                    <div class="p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
-                        <span class="text-5xl font-heading text-white block mb-4 opacity-50 group-hover:opacity-100 transition">L</span>
+                    <div class="p-6 sm:p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
+                        <span class="text-4xl sm:text-5xl font-heading text-white block mb-4 opacity-50 group-hover:opacity-100 transition">L</span>
                         <h3 class="text-xl font-bold mb-2">LOCAL</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Nous ne faisons pas que passer. Nous vivons ici, nous y croyons.</p>
                     </div>
-                    <div class="p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
-                        <span class="text-5xl font-heading text-jalo-yellow block mb-4 opacity-50 group-hover:opacity-100 transition">O</span>
+                    <div class="p-6 sm:p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
+                        <span class="text-4xl sm:text-5xl font-heading text-jalo-yellow block mb-4 opacity-50 group-hover:opacity-100 transition">O</span>
                         <h3 class="text-xl font-bold mb-2">ORIENTATION CLIENT</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Tout pour celui qui compte le plus : le client final.</p>
                     </div>
-                    <div class="p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
-                        <span class="text-5xl font-heading text-white block mb-4 opacity-50 group-hover:opacity-100 transition">O</span>
+                    <div class="p-6 sm:p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group">
+                        <span class="text-4xl sm:text-5xl font-heading text-white block mb-4 opacity-50 group-hover:opacity-100 transition">O</span>
                         <h3 class="text-xl font-bold mb-2">OPÉRATIONNALITÉ</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Agir vite, bien, avec méthode. L'efficacité est une discipline.</p>
                     </div>
-                    <div class="p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group lg:col-span-3 flex flex-col md:flex-row items-center gap-6">
-                        <span class="text-6xl font-heading text-jalo-yellow opacity-50 group-hover:opacity-100 transition">G</span>
+                    <div class="p-6 sm:p-8 bg-white/5 rounded-2xl hover:bg-white/10 transition border border-white/10 group lg:col-span-3 flex flex-col md:flex-row items-center gap-6">
+                        <span class="text-5xl sm:text-6xl font-heading text-jalo-yellow opacity-50 group-hover:opacity-100 transition">G</span>
                         <div>
-                            <h3 class="text-2xl font-bold mb-2">GAIN PARTAGÉS</h3>
+                            <h3 class="text-xl sm:text-2xl font-bold mb-2">GAIN PARTAGÉS</h3>
                             <p class="text-gray-400 leading-relaxed">La croissance à visage humain. Construire main dans la main avec nos clients, dans une dynamique de progrès mutuel.</p>
                         </div>
                     </div>
@@ -460,61 +562,61 @@
             </div>
         </section>
 
-        <!-- 6. ENGAGEMENTS -->
-        <section id="engagements" class="py-24 bg-gray-50">
-            <div class="container mx-auto px-6 max-w-5xl">
+        <!-- 6. GALLERY (Replacing Engagements) -->
+        <section id="gallery" class="py-24 bg-gray-50">
+            <div class="container mx-auto px-6 max-w-6xl">
                 <div class="text-center mb-16">
-                    <span class="text-jalo-yellow font-bold uppercase tracking-widest">Le Pacte Jalo</span>
-                    <h2 class="text-4xl font-heading mt-2">LES 10 COMMANDEMENTS DU JALOSTICIEN</h2>
+                    <span class="text-jalo-yellow font-bold uppercase tracking-widest">L'Esprit Jalo en Images</span>
+                    <h2 class="text-4xl font-heading mt-2">NOTRE ÉQUIPE ET NOS OPÉRATIONS</h2>
                 </div>
 
-                <div class="bg-white rounded-3xl shadow-xl p-10 md:p-16 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-jalo-yellow opacity-10 rounded-full blur-3xl"></div>
-                    <div class="space-y-6 relative z-10">
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">01</span>
-                            <p class="text-lg font-medium pt-2">Je respecte toujours la promesse faite au client.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">02</span>
-                            <p class="text-lg font-medium pt-2">Je livre à l'heure, ou je préviens avec honnêteté.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">03</span>
-                            <p class="text-lg font-medium pt-2">Je cherche à anticiper plutôt que subir. Je ne dors pas tant que le client n’est pas satisfait.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">04</span>
-                            <p class="text-lg font-medium pt-2">Je respecte les délais, les process et toutes les parties prenantes.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">05</span>
-                            <p class="text-lg font-medium pt-2">Je traite chaque commande comme une mission stratégique.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">06</span>
-                            <p class="text-lg font-medium pt-2">Je ne dis jamais “ce n’est pas mon rôle” si le client attend.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">07</span>
-                            <p class="text-lg font-medium pt-2">Je donne de la visibilité et de la traçabilité.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">08</span>
-                            <p class="text-lg font-medium pt-2">Je corrige mes erreurs sans me cacher.</p>
-                        </div>
-                        <div class="flex gap-6 items-start border-b border-gray-100 pb-4">
-                            <span class="text-3xl font-heading text-gray-200">09</span>
-                            <p class="text-lg font-medium pt-2">Je suis fier(ère) de représenter JALO et je le raconte autour de moi.</p>
-                        </div>
-                        <div class="flex gap-6 items-start">
-                            <span class="text-3xl font-heading text-jalo-yellow">10</span>
-                            <p class="text-lg font-bold pt-2 text-black">Je travaille pour que nos clients puissent mieux vendre, et que JALO grandisse avec eux.</p>
-                        </div>
+                <!-- Responsive Bento Grid Gallery with 8 images -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <!-- Original Image 1 (Large - 4 cols) -->
+                    <div class="gallery-item col-span-2 md:col-span-4 rounded-xl overflow-hidden shadow-xl aspect-[4/3] relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D22AQHulA3kP4A45A/feedshare-shrink_2048_1536/B4DZo57e7tJUAw-/0/1761908659887?e=1765411200&v=beta&t=BuGKMw4Z9w_t4Tq5SxJW6_Zon6VzL65Xgz_APS1fWw4" alt="Équipe Jalo en réunion stratégique" class="gallery-img">
+                        <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition duration-300"></div>
+                    </div>
+                    
+                    <!-- Original Image 2 (Medium - 2 cols) -->
+                    <div class="gallery-item col-span-2 md:col-span-2 rounded-xl overflow-hidden shadow-xl aspect-square relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D22AQETw9QuOyVJRw/feedshare-shrink_1280/B4DZoVOegSJMAs-/0/1761293491194?e=1765411200&v=beta&t=XYSD6UaOovtXBy9Jna7c0DtaB_0Pcy1gYudivCup4A4" alt="Chargement de fret aérien" class="gallery-img">
+                        <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition duration-300"></div>
+                    </div>
+
+                    <!-- New Image 1 (Small - 2 cols) -->
+                    <div class="gallery-item col-span-2 md:col-span-2 lg:col-span-2 rounded-xl overflow-hidden shadow-xl aspect-square relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D22AQHvW8gRTpLdfg/feedshare-shrink_800/B4DZfFhmWBG8Ag-/0/1751365784611?e=1765411200&v=beta&t=4moH7krw8RTAREyX8Cy1A8NleUkslz91uCODuKhiY8Y" alt="Personnel Jalo devant un camion" class="gallery-img">
+                        <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition duration-300"></div>
+                    </div>
+                    
+                    <!-- Original Image 3 (Small - 2 cols) -->
+                    <div class="gallery-item col-span-2 md:col-span-2 lg:col-span-2 rounded-xl overflow-hidden shadow-xl aspect-square relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D22AQGfBOB4BroL9Q/feedshare-shrink_1280/B4DZoVOeywIkAs-/0/1761293540582?e=1765411200&v=beta&t=QIDRZOU0bsK5Yp2AUrvEO-Sn2WMqTauMU0NObTmKmg8" alt="Travailleur dans l'entrepôt" class="gallery-img">
+                        <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition duration-300"></div>
+                    </div>
+                    
+                    <!-- New Image 3 (Medium - 2 cols) -->
+                    <div class="gallery-item col-span-2 md:col-span-2 lg:col-span-2 rounded-xl overflow-hidden shadow-xl aspect-square relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D22AQGkHrIWPNNfvw/feedshare-shrink_2048_1536/B4DZaqRxmFHQA0-/0/1746613517167?e=1765411200&v=beta&t=NEpx0U-CSX-YiJarl-cdbnt2A5X0hL8ftL4P5IoAZbA" alt="Opérations de chargement par chariot élévateur" class="gallery-img">
+                        <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition duration-300"></div>
+                    </div>
+
+                    <!-- Original Image 4 (Medium - 3 cols) -->
+                    <div class="gallery-item col-span-2 md:col-span-2 lg:col-span-3 rounded-xl overflow-hidden shadow-xl aspect-video relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D22AQHPkabYULxAyQ/feedshare-shrink_2048_1536/B4DZkFR9IzIYAw-/0/1756730307439?e=1765411200&v=beta&t=PXgDF1T1oj0G_A_Yu2lUmHMk0FtbUtrNfCyYDBiLMIY" alt="Opérations portuaires" class="gallery-img">
+                        <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition duration-300"></div>
+                    </div>
+
+                    <!-- Original Image 5 (Small - 2 cols) -->
+                    <div class="gallery-item col-span-2 md:col-span-2 lg:col-span-3 rounded-xl overflow-hidden shadow-xl aspect-video relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D22AQFSugq16k_H4A/feedshare-shrink_2048_1536/B4DZkFR9HpG8A0-/0/1756730306974?e=1765411200&v=beta&t=q73FQVw2yD5lgoUscgqmxAhUG4zAooY5Mv-2KPsPcQU" alt="Camion Jalo en livraison" class="gallery-img">
+                        <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition duration-300"></div>
                     </div>
                 </div>
             </div>
         </section>
+
 
         <!-- 7. PROOF (NEEMBA) -->
         <section id="proof" class="py-24 bg-white">
@@ -530,21 +632,22 @@
                             Rien de cela n'est le fruit du hasard. C'est l'œuvre d'une équipe engagée, orientée résultats.
                         </p>
                     </div>
-                    <div class="lg:w-1/2 grid grid-cols-2 gap-6">
-                        <div class="bg-black text-white p-8 rounded-2xl text-center hover:scale-105 transition duration-300">
-                            <div class="text-4xl font-heading text-jalo-yellow mb-2">>70%</div>
+                    <!-- Responsive Stats Grid -->
+                    <div class="lg:w-1/2 grid grid-cols-2 gap-4 sm:gap-6">
+                        <div class="bg-black text-white p-6 sm:p-8 rounded-2xl text-center hover:scale-105 transition duration-300">
+                            <div class="text-3xl sm:text-4xl font-heading text-jalo-yellow mb-2">>70%</div>
                             <div class="text-xs uppercase font-bold tracking-widest">Taux de Service</div>
                         </div>
-                        <div class="bg-black text-white p-8 rounded-2xl text-center hover:scale-105 transition duration-300">
-                            <div class="text-4xl font-heading text-jalo-yellow mb-2">-40%</div>
+                        <div class="bg-black text-white p-6 sm:p-8 rounded-2xl text-center hover:scale-105 transition duration-300">
+                            <div class="text-3xl sm:text-4xl font-heading text-jalo-yellow mb-2">-40%</div>
                             <div class="text-xs uppercase font-bold tracking-widest">BFR Réduit</div>
                         </div>
-                        <div class="bg-gray-100 p-8 rounded-2xl text-center border border-gray-200">
-                            <div class="text-3xl font-heading text-black mb-2">20 Mds+</div>
+                        <div class="bg-gray-100 p-6 sm:p-8 rounded-2xl text-center border border-gray-200">
+                            <div class="text-2xl sm:text-3xl font-heading text-black mb-2">20 Mds+</div>
                             <div class="text-xs uppercase font-bold text-gray-500 tracking-widest">Matériel livré</div>
                         </div>
-                        <div class="bg-gray-100 p-8 rounded-2xl text-center border border-gray-200">
-                            <div class="text-3xl font-heading text-black mb-2">25 Jours</div>
+                        <div class="bg-gray-100 p-6 sm:p-8 rounded-2xl text-center border border-gray-200">
+                            <div class="text-2xl sm:text-3xl font-heading text-black mb-2">25 Jours</div>
                             <div class="text-xs uppercase font-bold text-gray-500 tracking-widest">Délai Moyen</div>
                         </div>
                     </div>
@@ -554,7 +657,7 @@
 
         <!-- 8. SERVICES HEADER -->
         <section id="services-header" class="py-12 bg-jalo-black text-center">
-            <h2 class="text-4xl font-heading text-white mb-2">NOS SERVICES DÉTAILLÉS</h2>
+            <h2 class="text-3xl sm:text-4xl font-heading text-white mb-2">NOS SERVICES DÉTAILLÉS</h2>
             <p class="text-gray-400">L'expertise JALO pour chaque mode de transport.</p>
         </section>
 
@@ -564,8 +667,8 @@
                 <div class="flex flex-col lg:flex-row gap-16 items-center">
                     <div class="lg:w-1/2">
                         <div class="inline-block p-3 bg-black text-white rounded-lg mb-6"><i class="fas fa-ship text-2xl"></i></div>
-                        <h2 class="text-4xl font-heading mb-6 uppercase">Fret Maritime</h2>
-                        <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                        <h2 class="text-3xl sm:text-4xl font-heading mb-6 uppercase">Fret Maritime</h2>
+                        <p class="text-base sm:text-lg text-gray-600 leading-relaxed mb-6">
                             Que vous expédiiez un conteneur complet ou quelques palettes, notre service est conçu pour optimiser vos coûts sans compromettre la sécurité. Du fournisseur à votre entrepôt.
                         </p>
                         <ul class="space-y-4">
@@ -580,7 +683,7 @@
                         </ul>
                     </div>
                     <div class="lg:w-1/2 relative">
-                        <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Port et conteneurs" class="rounded-3xl shadow-2xl w-full h-auto object-cover">
+                        <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="rounded-3xl shadow-2xl">
                         <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg max-w-xs hidden md:block">
                             <h4 class="font-bold text-jalo-yellow">Le saviez-vous ?</h4>
                             <p class="text-sm text-gray-600 mt-1">Nous gérons le pré-acheminement depuis l'usine du fournisseur.</p>
@@ -596,8 +699,8 @@
                 <div class="flex flex-col lg:flex-row-reverse gap-16 items-center">
                     <div class="lg:w-1/2">
                         <div class="inline-block p-3 bg-black text-white rounded-lg mb-6"><i class="fas fa-plane text-2xl"></i></div>
-                        <h2 class="text-4xl font-heading mb-6 uppercase">Fret Aérien</h2>
-                        <p class="text-gray-600 text-lg leading-relaxed mb-8">
+                        <h2 class="text-3xl sm:text-4xl font-heading mb-6 uppercase">Fret Aérien</h2>
+                        <p class="text-base sm:text-lg text-gray-600 leading-relaxed mb-8">
                             Quand chaque minute compte. Solutions express pour vos cargaisons critiques, produits périssables ou pièces de rechange urgentes.
                         </p>
                         <div class="grid grid-cols-2 gap-4">
@@ -612,7 +715,7 @@
                         </div>
                     </div>
                     <div class="lg:w-1/2">
-                        <img src="https://images.unsplash.com/photo-1559297434-fae8a1916a79?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Avion cargo en vol" class="rounded-3xl shadow-2xl w-full h-auto object-cover">
+                        <img src="https://images.unsplash.com/photo-1559297434-fae8a1916a79?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="rounded-3xl shadow-2xl">
                     </div>
                 </div>
             </div>
@@ -624,8 +727,8 @@
                 <div class="flex flex-col lg:flex-row gap-16 items-center">
                     <div class="lg:w-1/2">
                         <div class="inline-block p-3 bg-black text-white rounded-lg mb-6"><i class="fas fa-truck text-2xl"></i></div>
-                        <h2 class="text-4xl font-heading mb-6 uppercase">Transport Routier</h2>
-                        <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                        <h2 class="text-3xl sm:text-4xl font-heading mb-6 uppercase">Transport Routier</h2>
+                        <p class="text-base sm:text-lg text-gray-600 leading-relaxed mb-6">
                             Connexion sous-régionale fiable. Notre flotte connecte les ports d'Abidjan aux zones les plus reculées (Hinterland).
                         </p>
                         <div class="flex flex-wrap gap-3 mb-8">
@@ -636,14 +739,14 @@
                         </div>
                     </div>
                     <div class="lg:w-1/2">
-                        <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Flotte de camions de transport" class="rounded-3xl shadow-2xl w-full h-auto object-cover">
+                        <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="rounded-3xl shadow-2xl">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 9. SOFTLOGIS (Dark Section) -->
-        <section id="service-digital" class="relative py-32 bg-[#050505] text-white overflow-hidden">
+        <section id="service-digital" class="relative py-24 sm:py-32 bg-[#050505] text-white overflow-hidden">
             <!-- Background FX -->
             <div class="absolute inset-0 opacity-20 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
             <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-jalo-yellow rounded-full mix-blend-overlay filter blur-[128px] opacity-10 animate-pulse"></div>
@@ -658,10 +761,10 @@
                             </span>
                             <span class="text-xs font-mono text-gray-300 uppercase">System Online v2.4</span>
                         </div>
-                        <h2 class="text-6xl md:text-7xl font-heading mb-6 leading-tight">
+                        <h2 class="text-5xl sm:text-7xl font-heading mb-6 leading-tight">
                             SOFTLOGIS<span class="text-jalo-yellow">.</span>
                         </h2>
-                        <p class="text-2xl text-gray-400 font-light mb-10 max-w-lg leading-relaxed">
+                        <p class="text-xl text-gray-400 font-light mb-10 max-w-lg leading-relaxed">
                             Le système nerveux central de vos opérations. TMS, WMS et pilotage documentaire en un seul outil.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4">
@@ -720,10 +823,11 @@
     <!-- Modern Footer -->
     <footer class="bg-[#111] text-white pt-20 pb-10 border-t border-gray-900">
         <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-4 gap-12 border-b border-gray-800 pb-12 mb-12">
-                <div class="md:col-span-2">
+            <!-- Responsive Footer Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 border-b border-gray-800 pb-12 mb-12">
+                <div class="lg:col-span-1">
                     <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo" class="h-12 mb-6 grayscale opacity-80 hover:grayscale-0 transition-all">
-                    <p class="text-gray-400 max-w-md text-lg mb-4">
+                    <p class="text-gray-400 max-w-md text-base mb-4">
                         La logistique au service de l’Afrique et du monde.
                     </p>
                      <div class="space-y-2 text-sm text-gray-500">
@@ -732,7 +836,7 @@
                         <p><span class="font-bold text-jalo-yellow">Taille:</span> 51-200 employés</p>
                     </div>
                 </div>
-                <div>
+                <div class="lg:col-span-1">
                     <h4 class="font-bold mb-6 text-jalo-yellow uppercase text-sm tracking-wider">Services</h4>
                     <ul class="space-y-4 text-gray-400">
                         <li><a href="#service-maritime" class="hover:text-white transition-colors">Maritime</a></li>
@@ -741,13 +845,20 @@
                         <li><a href="#service-digital" class="text-white font-bold">SoftLogis</a></li>
                     </ul>
                 </div>
-                <div id="contact">
+                <div id="contact" class="lg:col-span-1">
                     <h4 class="font-bold mb-6 text-jalo-yellow uppercase text-sm tracking-wider">Contact</h4>
                     <ul class="space-y-4 text-gray-400">
                         <li class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-jalo-yellow"></i> Abidjan, Zone Portuaire</li>
                         <li class="flex items-center gap-2"><i class="fas fa-phone-alt text-jalo-yellow"></i> <a href="tel:+2252722280132" class="hover:text-white transition-colors">+225 27 22 28 01 32</a></li>
                         <li class="flex items-center gap-2"><i class="fas fa-envelope text-jalo-yellow"></i> <a href="mailto:contact@jalo-logistics.com" class="hover:text-white underline decoration-jalo-yellow decoration-2 underline-offset-4">contact@jalo-logistics.com</a></li>
                     </ul>
+                </div>
+                <div class="lg:col-span-1">
+                    <h4 class="font-bold mb-6 text-jalo-yellow uppercase text-sm tracking-wider">Localisation</h4>
+                    <!-- Responsive iframe container -->
+                    <div class="rounded-xl overflow-hidden border-2 border-white/10 w-full h-48">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m24!1m12!1m3!1d453.68036526518455!2d-3.9903167157191897!3d5.3743820401282525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m9!3e0!4m3!3m2!1d5.3740216!2d-3.99049!4m3!3m2!1d5.3739896!2d-3.9904685!5e0!3m2!1sfr!2sci!4v1763652436408!5m2!1sfr!2sci" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
                 </div>
             </div>
             <div class="flex flex-col md:flex-row justify-between items-center text-gray-600 text-sm">
@@ -765,28 +876,12 @@
         // Mobile Menu Logic
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            const toggle = document.getElementById('mobile-toggle');
-            const isHidden = menu.classList.contains('translate-x-full');
-            if (isHidden) {
+            if (menu.classList.contains('translate-x-full')) {
                 menu.classList.remove('translate-x-full');
                 menu.classList.add('translate-x-0');
-                menu.setAttribute('aria-hidden', 'false');
-                if (toggle) toggle.setAttribute('aria-expanded', 'true');
-                // lock body scroll
-                document.body.style.overflow = 'hidden';
-                // focus first link in menu
-                setTimeout(() => {
-                    const firstLink = menu.querySelector('a');
-                    if (firstLink) firstLink.focus();
-                }, 150);
             } else {
                 menu.classList.add('translate-x-full');
                 menu.classList.remove('translate-x-0');
-                menu.setAttribute('aria-hidden', 'true');
-                if (toggle) toggle.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-                // return focus to toggle button
-                if (toggle) toggle.focus();
             }
         }
 
@@ -799,14 +894,6 @@
             } else {
                 header.classList.remove('py-0');
                 header.querySelector('.glass').style.background = 'rgba(255, 255, 255, 0.90)';
-            }
-        });
-
-        // Close mobile menu on escape key
-        window.addEventListener('keydown', (e) => {
-            const menu = document.getElementById('mobile-menu');
-            if (e.key === 'Escape' && menu && !menu.classList.contains('translate-x-full')) {
-                toggleMobileMenu();
             }
         });
     </script>
