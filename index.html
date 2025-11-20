@@ -65,44 +65,62 @@
         })();
     </script>
     <script>
-        // Theme toggle: persist in localStorage and apply .dark class on <body>
+        // Improved theme manager: supports 'light' | 'dark' | 'system'
         (function () {
-            const storageKey = 'site-theme'; // 'dark' or 'light'
-            const toggle = document.getElementById('theme-toggle');
-            const icon = document.getElementById('theme-icon');
+            const storageKey = 'site-theme'; // values: 'dark'|'light'|'system'
+            const desktopToggle = document.getElementById('theme-toggle');
+            const desktopIcon = document.getElementById('theme-icon');
+            const mobileToggle = document.getElementById('mobile-theme-toggle');
+            const mobileIcon = document.getElementById('mobile-theme-icon');
 
-            function applyTheme(theme, save = false) {
-                const body = document.body;
-                if (theme === 'dark') {
-                    body.classList.add('dark');
-                    if (toggle) toggle.setAttribute('aria-pressed', 'true');
-                    if (icon) icon.className = 'fas fa-sun text-yellow-300';
-                } else {
-                    body.classList.remove('dark');
-                    if (toggle) toggle.setAttribute('aria-pressed', 'false');
-                    if (icon) icon.className = 'fas fa-moon';
-                }
-                if (save) localStorage.setItem(storageKey, theme);
+            const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+
+            function setAttributeTheme(t) {
+                // set attribute for CSS selectors and class on body for older rules
+                document.documentElement.setAttribute('data-theme', t === 'system' ? (mq && mq.matches ? 'dark' : 'light') : t);
+                if (t === 'dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
             }
 
-            function initTheme() {
-                const saved = localStorage.getItem(storageKey);
-                if (saved === 'dark' || saved === 'light') {
-                    applyTheme(saved, false);
-                    return;
-                }
-                // Respect OS preference by default
-                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                applyTheme(prefersDark ? 'dark' : 'light', false);
+            function updateUI(t) {
+                // update icons and aria states
+                const active = (t === 'system' ? (mq && mq.matches ? 'dark' : 'light') : t);
+                if (desktopToggle) desktopToggle.setAttribute('aria-pressed', active === 'dark' ? 'true' : 'false');
+                if (mobileToggle) mobileToggle.setAttribute('aria-pressed', active === 'dark' ? 'true' : 'false');
+                if (desktopIcon) desktopIcon.className = active === 'dark' ? 'fas fa-sun text-yellow-300' : 'fas fa-moon';
+                if (mobileIcon) mobileIcon.className = active === 'dark' ? 'fas fa-sun text-yellow-300' : 'fas fa-moon';
             }
 
-            window.toggleTheme = function toggleTheme() {
-                const isDark = document.body.classList.contains('dark');
-                applyTheme(isDark ? 'light' : 'dark', true);
-            };
+            function saveTheme(pref) { localStorage.setItem(storageKey, pref); }
 
-            // Init on load
-            window.addEventListener('load', initTheme);
+            function readTheme() { return localStorage.getItem(storageKey) || 'system'; }
+
+            function apply(pref, save = false) {
+                setAttributeTheme(pref);
+                updateUI(pref);
+                if (save) saveTheme(pref);
+            }
+
+            function cycleTheme() {
+                const cur = readTheme();
+                const order = ['light', 'dark', 'system'];
+                const next = order[(order.indexOf(cur) + 1) % order.length];
+                apply(next, true);
+            }
+
+            // Attach handlers
+            if (desktopToggle) desktopToggle.addEventListener('click', cycleTheme);
+            if (mobileToggle) mobileToggle.addEventListener('click', cycleTheme);
+
+            // Listen to system preference changes if user selected 'system'
+            if (mq && mq.addEventListener) mq.addEventListener('change', () => {
+                if (readTheme() === 'system') apply('system', false);
+            });
+
+            // Init
+            window.addEventListener('load', function () {
+                const pref = readTheme();
+                apply(pref, false);
+            });
         })();
     </script>
 
@@ -122,7 +140,8 @@
             --accent-strong: #FFD200;
         }
 
-        .dark {
+        /* dark theme variables via attribute or class for broader selector support */
+        [data-theme="dark"], .dark {
             --bg: #0b0b0d;
             --text: #e6e6e6;
             --muted: #9ca3af;
@@ -134,6 +153,20 @@
             --accent-foreground: #0b0b0d;
             --accent-strong: #FFD200;
         }
+
+        /* Fallback: allow targeting data-theme for more predictable overrides */
+        [data-theme="dark"] .bg-jalo-black { background-color: var(--surface) !important; }
+        [data-theme="dark"] .text-white { color: var(--text) !important; }
+        [data-theme="dark"] .bg-white { background-color: var(--card) !important; }
+        [data-theme="dark"] .bg-gray-50 { background-color: #0b0b0d !important; }
+        [data-theme="dark"] .border-gray-100 { border-color: rgba(255,255,255,0.03) !important; }
+        [data-theme="dark"] .text-gray-400 { color: var(--muted) !important; }
+        [data-theme="dark"] .text-gray-600 { color: var(--muted) !important; }
+        [data-theme="dark"] .bg-gray-100 { background-color: rgba(255,255,255,0.02) !important; }
+        [data-theme="dark"] .shadow-lg, [data-theme="dark"] .shadow-2xl { box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; }
+
+        /* Images: slightly reduce brightness in dark for coherence */
+        [data-theme="dark"] img { filter: brightness(0.95) contrast(0.98); }
 
         body {
             background-color: var(--bg);
@@ -264,9 +297,10 @@
                     <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo Logistics" class="h-10 md:h-14 object-contain">
                 </a>
 
-                <!-- Theme Toggle -->
-                <button id="theme-toggle" aria-pressed="false" title="Basculer le mode sombre" class="ml-4 hidden lg:inline-flex items-center gap-2 p-2 rounded text-sm focus:outline-none" onclick="toggleTheme()">
-                    <i id="theme-icon" class="fas fa-moon text-xl"></i>
+                <!-- Theme Toggle (desktop) -->
+                <button id="theme-toggle" aria-pressed="false" title="Basculer le mode sombre" class="ml-4 hidden lg:inline-flex items-center gap-2 p-2 rounded text-sm focus:outline-none" type="button">
+                    <i id="theme-icon" class="fas fa-moon text-xl" aria-hidden="true"></i>
+                    <span class="sr-only">Basculer le thème</span>
                 </button>
 
                 <!-- Desktop Navigation -->
@@ -321,7 +355,12 @@
         <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 flex flex-col" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
             <div class="p-6 flex justify-between items-center border-b border-gray-100">
                 <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo" class="h-10 w-auto">
-                <button onclick="toggleMobileMenu()" aria-label="Fermer le menu" class="text-2xl text-black"><i class="fas fa-times"></i></button>
+                <div class="flex items-center gap-3">
+                    <button id="mobile-theme-toggle" aria-pressed="false" title="Basculer le thème" class="text-sm px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200">
+                        <i id="mobile-theme-icon" class="fas fa-moon"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()" aria-label="Fermer le menu" class="text-2xl text-black"><i class="fas fa-times"></i></button>
+                </div>
             </div>
                 <div class="p-2 overflow-y-auto flex-grow space-y-6 safe-area-x">
                 <div class="space-y-2">
