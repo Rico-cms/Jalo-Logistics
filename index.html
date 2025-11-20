@@ -1010,8 +1010,8 @@
             const qrImg = document.getElementById('vcard-qr');
             if (qrImg) {
                 const encoded = encodeURIComponent(vcard);
-                // size 300x300 gives a clear QR; chld=L|1 sets error correction and margin
-                qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encoded}&chld=L|1`;
+                // Try qrserver (reliable public API). If you prefer Google Charts, switch back.
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encoded}`;
                 qrImg.alt = 'QR code pour télécharger la vCard de Jalo Logistics';
             }
 
