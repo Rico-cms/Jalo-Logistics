@@ -64,20 +64,88 @@
             window.addEventListener('resize', updateHeaderHeight);
         })();
     </script>
+    <script>
+        // Theme toggle: persist in localStorage and apply .dark class on <body>
+        (function () {
+            const storageKey = 'site-theme'; // 'dark' or 'light'
+            const toggle = document.getElementById('theme-toggle');
+            const icon = document.getElementById('theme-icon');
+
+            function applyTheme(theme, save = false) {
+                const html = document.documentElement;
+                if (theme === 'dark') {
+                    html.classList.add('dark');
+                    if (toggle) toggle.setAttribute('aria-pressed', 'true');
+                    if (icon) icon.className = 'fas fa-sun text-yellow-300';
+                } else {
+                    html.classList.remove('dark');
+                    if (toggle) toggle.setAttribute('aria-pressed', 'false');
+                    if (icon) icon.className = 'fas fa-moon';
+                }
+                if (save) localStorage.setItem(storageKey, theme);
+            }
+
+            function initTheme() {
+                const saved = localStorage.getItem(storageKey);
+                if (saved === 'dark' || saved === 'light') {
+                    applyTheme(saved, false);
+                    return;
+                }
+                // Respect OS preference by default
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme(prefersDark ? 'dark' : 'light', false);
+            }
+
+            window.toggleTheme = function toggleTheme() {
+                const isDark = document.documentElement.classList.contains('dark');
+                applyTheme(isDark ? 'light' : 'dark', true);
+            };
+
+            // Init on load
+            window.addEventListener('load', initTheme);
+        })();
+    </script>
 
     <style>
         /* UI Enhancements */
+        :root{
+            /* Theme variables (light by default) */
+            --bg: #FAFAFA;
+            --text: #111111;
+            --muted: #6b7280;
+            --surface: #FFFFFF;
+            --card: #ffffff;
+            --glass-bg: rgba(255,255,255,0.90);
+            --header-border: rgba(0,0,0,0.05);
+            --accent: #FFD200;
+            --accent-foreground: #111111;
+            --accent-strong: #FFD200;
+        }
+
+        .dark {
+            --bg: #0b0b0d;
+            --text: #e6e6e6;
+            --muted: #9ca3af;
+            --surface: #0f1720;
+            --card: #0f1720;
+            --glass-bg: rgba(8,8,8,0.6);
+            --header-border: rgba(255,255,255,0.03);
+            --accent: #FFD200;
+            --accent-foreground: #0b0b0d;
+            --accent-strong: #FFD200;
+        }
+
         body {
-            background-color: #FAFAFA;
-            color: #111;
+            background-color: var(--bg);
+            color: var(--text);
         }
 
         /* Glassmorphism Header */
         .glass {
-            background: rgba(255, 255, 255, 0.90);
+            background: var(--glass-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--header-border);
         }
 
         /* Bento Grid Card Hover */
@@ -98,6 +166,23 @@
         /* Navigation Active State */
         .nav-link.active {
             color: #FFD200;
+        }
+
+        /* Theme overrides for common utility classes (higher specificity) */
+        body.dark .bg-jalo-black { background-color: var(--surface) !important; }
+        body.dark .text-white { color: var(--text) !important; }
+        body.dark .bg-white { background-color: var(--card) !important; }
+        body.dark .bg-gray-50 { background-color: #0b0b0d !important; }
+        body.dark .border-gray-100 { border-color: rgba(255,255,255,0.03) !important; }
+        body.dark .text-gray-400 { color: var(--muted) !important; }
+        body.dark .text-gray-600 { color: var(--muted) !important; }
+        body.dark .bg-gray-100 { background-color: rgba(255,255,255,0.02) !important; }
+        body.dark .shadow-lg, body.dark .shadow-2xl { box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; }
+
+        /* Accent (jalo yellow) remains the same but ensure contrast in dark */
+        .jalo-accent {
+            background: var(--accent);
+            color: var(--accent-foreground);
         }
 
         /* Safe area helpers for iPhone notches */
@@ -176,6 +261,11 @@
                 <a href="#home" class="flex-shrink-0 cursor-pointer transition-transform hover:scale-105">
                     <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo Logistics" class="h-10 md:h-14 object-contain">
                 </a>
+
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" aria-pressed="false" title="Basculer le mode sombre" class="ml-4 hidden lg:inline-flex items-center gap-2 p-2 rounded text-sm focus:outline-none" onclick="toggleTheme()">
+                    <i id="theme-icon" class="fas fa-moon text-xl"></i>
+                </button>
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex items-center gap-8">
