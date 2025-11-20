@@ -143,7 +143,7 @@
                         </div>
                     </div>
 
-                    <a href="#contact" class="bg-jalo-yellow text-jalo-black border-2 border-jalo-yellow px-6 py-2.5 text-sm font-bold uppercase tracking-wide rounded-sm hover:bg-black hover:text-jalo-yellow hover:border-black transition-all">
+                    <a href="#contact" class="bg-jalo-yellow text-jalo-black border-2 border-jalo-yellow px-4 md:px-6 py-2 md:py-2.5 text-sm font-bold uppercase tracking-wide rounded-sm hover:bg-black hover:text-jalo-yellow hover:border-black transition-all">
                         Devis Express
                     </a>
                 </nav>
@@ -156,12 +156,12 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 flex flex-col">
-            <div class="p-6 flex justify-between items-center border-b border-gray-100">
-                <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo" class="h-10">
-                <button onclick="toggleMobileMenu()" class="text-2xl text-black"><i class="fas fa-times"></i></button>
+        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 flex flex-col" role="dialog" aria-modal="true" aria-hidden="true">
+                <div class="p-6 flex justify-between items-center border-b border-gray-100">
+                <img src="https://media.licdn.com/dms/image/v2/D4E0BAQHCh5a7Bt1tgQ/company-logo_200_200/B4EZhqCR9SHIAM-/0/1754125641405?e=2147483647&v=beta&t=MsuacEQy8fTE5lfIGvpyaU4zZiUKDSAaPCguwk2qu4Y" alt="Jalo" class="h-10 w-auto">
+                <button onclick="toggleMobileMenu()" aria-label="Close menu" class="text-2xl text-black"><i class="fas fa-times"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto flex-grow space-y-6">
+                <div class="p-6 overflow-y-auto flex-grow space-y-6">
                 <div class="space-y-4">
                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Navigation</p>
                     <a href="#home" onclick="toggleMobileMenu()" class="block text-xl font-bold text-gray-900">Accueil</a>
@@ -194,12 +194,12 @@
                     <div class="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white font-medium text-xs uppercase tracking-widest mb-6">
                         <span class="w-2 h-2 rounded-full bg-jalo-yellow"></span> Supply Chain End-to-End
                     </div>
-                    <h1 class="text-5xl md:text-7xl lg:text-8xl font-heading text-white leading-[0.9] mb-8 tracking-tight">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-heading text-white leading-tight md:leading-[0.95] mb-6 md:mb-8 tracking-tight">
                         LIBÉRER<br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-jalo-yellow to-yellow-200">VOTRE POTENTIEL</span><br>
                         LOGISTIQUE.
                     </h1>
-                    <p class="text-lg md:text-2xl text-gray-300 mb-10 max-w-2xl font-light leading-relaxed">
+                    <p class="text-base sm:text-lg md:text-xl text-gray-300 mb-8 md:mb-10 max-w-2xl font-light leading-relaxed">
                         Nous transformons la complexité en avantage concurrentiel. Du fournisseur à l'entrepôt, nous prenons les risques pour que vous preniez les parts de marché.
                     </p>
                     <div class="flex flex-wrap gap-4">
@@ -262,7 +262,7 @@
                     </div>
 
                     <!-- Card 4 -->
-                    <a href="#proof" class="bento-card bg-jalo-yellow p-10 rounded-3xl shadow-lg flex flex-col justify-center items-center text-center cursor-pointer group">
+                    <a href="#proof" class="bento-card bg-jalo-yellow p-8 md:p-10 rounded-3xl shadow-lg flex flex-col justify-center items-center text-center cursor-pointer group">
                         <h3 class="text-4xl font-heading mb-2 text-black">NEEMBA</h3>
                         <p class="font-bold text-black/70 mb-4 group-hover:text-black">Voir le Case Study</p>
                         <i class="fas fa-arrow-right text-xl bg-black text-white w-10 h-10 flex items-center justify-center rounded-full group-hover:scale-110 transition-transform"></i>
@@ -284,7 +284,9 @@
                     </div>
                     <div class="md:w-1/2">
                         <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7372203103678435328?compact=1" height="500" width="100%" frameborder="0" allowfullscreen="" title="Embedded post" class="w-full min-h-[500px]"></iframe>
+                            <div class="w-full aspect-video">
+                                <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7372203103678435328?compact=1" frameborder="0" allowfullscreen="" title="Embedded post" class="w-full h-full"></iframe>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -313,7 +315,7 @@
                     </div>
                     <div class="md:w-1/2 relative">
                         <div class="absolute inset-0 bg-jalo-yellow rounded-3xl transform rotate-3"></div>
-                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="relative z-10 rounded-3xl shadow-2xl filter grayscale hover:grayscale-0 transition duration-500">
+                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="relative z-10 rounded-3xl shadow-2xl filter grayscale hover:grayscale-0 transition duration-500 w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
@@ -763,12 +765,17 @@
         // Mobile Menu Logic
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            if (menu.classList.contains('translate-x-full')) {
+            const isHidden = menu.classList.contains('translate-x-full');
+            if (isHidden) {
                 menu.classList.remove('translate-x-full');
                 menu.classList.add('translate-x-0');
+                menu.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
             } else {
                 menu.classList.add('translate-x-full');
                 menu.classList.remove('translate-x-0');
+                menu.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
             }
         }
 
@@ -781,6 +788,14 @@
             } else {
                 header.classList.remove('py-0');
                 header.querySelector('.glass').style.background = 'rgba(255, 255, 255, 0.90)';
+            }
+        });
+
+        // Close mobile menu on escape key
+        window.addEventListener('keydown', (e) => {
+            const menu = document.getElementById('mobile-menu');
+            if (e.key === 'Escape' && menu && !menu.classList.contains('translate-x-full')) {
+                toggleMobileMenu();
             }
         });
     </script>
