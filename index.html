@@ -71,6 +71,10 @@
             const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
 
             function setAttributeTheme(t) {
+                // Add a temporary transition class to smooth the theme change
+                document.documentElement.classList.add('theme-transition');
+                setTimeout(() => document.documentElement.classList.remove('theme-transition'), 380);
+
                 document.documentElement.setAttribute('data-theme', t === 'system' ? (mq && mq.matches ? 'dark' : 'light') : t);
                 if (t === 'dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
             }
@@ -88,6 +92,13 @@
                 if (mobileToggle) mobileToggle.setAttribute('aria-pressed', active === 'dark' ? 'true' : 'false');
                 if (desktopIcon) desktopIcon.className = active === 'dark' ? 'fas fa-sun text-yellow-300' : 'fas fa-moon';
                 if (mobileIcon) mobileIcon.className = active === 'dark' ? 'fas fa-sun text-yellow-300' : 'fas fa-moon';
+
+                // small visual hint on toggle: add focus ring briefly
+                [desktopToggle, mobileToggle].forEach(btn => {
+                    if (!btn) return;
+                    btn.classList.add('ring-2', 'ring-jalo-yellow');
+                    setTimeout(() => btn.classList.remove('ring-2', 'ring-jalo-yellow'), 380);
+                });
             }
 
             function apply(pref, save = false) {
@@ -158,6 +169,13 @@
             --accent-strong: #FFD200;
         }
 
+        /* Additional dark-mode tuning for visual hierarchy and accessibility */
+        [data-theme="dark"], .dark {
+            --card-elev: rgba(255,255,255,0.03);
+            --glass-bg-strong: rgba(12,12,12,0.72);
+            --muted-strong: #9aa3ad;
+        }
+
         /* Fallback: allow targeting data-theme for more predictable overrides */
         [data-theme="dark"] .bg-jalo-black { background-color: var(--surface) !important; }
         [data-theme="dark"] .text-white { color: var(--text) !important; }
@@ -217,6 +235,45 @@
         body.dark .text-gray-600 { color: var(--muted) !important; }
         body.dark .bg-gray-100 { background-color: rgba(255,255,255,0.02) !important; }
         body.dark .shadow-lg, body.dark .shadow-2xl { box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; }
+
+        /* Smooth theme transition helper (added/removed by JS when switching) */
+        .theme-transition, :root.theme-transition {
+            transition: background-color 360ms ease, color 360ms ease, border-color 360ms ease, box-shadow 360ms ease, filter 360ms ease;
+        }
+
+        /* Component-specific dark tweaks */
+        [data-theme="dark"] .bento-card, .dark .bento-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-color: rgba(255,255,255,0.04) !important;
+            box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+        }
+
+        [data-theme="dark"] .stat-card-bg, .dark .stat-card-bg {
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            color: var(--text);
+        }
+
+        /* Gallery images: reduce aggressive brightness but keep contrast */
+        [data-theme="dark"] .gallery-img, .dark .gallery-img {
+            filter: brightness(0.92) contrast(0.98) saturate(0.95);
+            transition: transform 400ms ease, filter 400ms ease;
+        }
+
+        /* Header glass in dark: slightly more opaque and warmer accent border */
+        [data-theme="dark"] .glass, .dark .glass {
+            background: var(--glass-bg-strong) !important;
+            border-bottom-color: rgba(255,210,0,0.06) !important;
+        }
+
+        /* Buttons: ensure primary CTA stays legible in dark */
+        [data-theme="dark"] .bg-jalo-yellow, .dark .bg-jalo-yellow {
+            background-image: linear-gradient(180deg,#ffd200,#f0b500) !important;
+            color: #0b0b0b !important;
+        }
+
+        /* Card text tweaks for legibility */
+        [data-theme="dark"] .text-gray-600, .dark .text-gray-600 { color: var(--muted-strong) !important; }
+        [data-theme="dark"] .text-gray-400, .dark .text-gray-400 { color: #9aa3ad !important; }
 
         /* Accent (jalo yellow) remains the same but ensure contrast in dark */
         .jalo-accent {
